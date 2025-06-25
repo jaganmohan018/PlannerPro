@@ -88,42 +88,59 @@ export default function PlannerPage() {
         </div>
       </Card>
 
-      {/* Two-Page Planner Layout */}
+      {/* Two-Page Planner Layout - Exact Match to Physical Planner */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
         {/* Left Page: Roadmap to Success */}
-        <Card className="overflow-hidden">
-          {/* Purple Header */}
-          <div className="bg-salon-purple text-white p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold mb-2">SalonCentric</h2>
-                <h3 className="text-xl font-semibold">Roadmap to Success</h3>
+        <Card className="overflow-hidden bg-white shadow-xl">
+          {/* Purple Header with Exact Layout */}
+          <div className="bg-gradient-to-r from-purple-800 to-purple-900 text-white p-4">
+            <div className="flex justify-between items-start">
+              <div className="flex-1">
+                <div className="text-xs opacity-90 mb-1">SalonCentric</div>
+                <h2 className="text-xl font-bold italic mb-1">Roadmap</h2>
+                <h2 className="text-xl font-bold italic">to Success</h2>
+              </div>
+              <div className="text-center px-4">
+                <div className="text-xs font-bold mb-1">GOAL</div>
+                <div className="text-sm font-bold leading-tight">Inspire the</div>
+                <div className="text-sm font-bold leading-tight">Beauty Community</div>
+                <div className="text-sm font-bold leading-tight">to be</div>
+                <div className="text-sm font-bold leading-tight">More Colorful</div>
               </div>
               <div className="text-right">
-                <div className="text-sm opacity-90">GOAL</div>
-                <div className="text-lg font-bold">More Customers</div>
-                <div className="text-sm opacity-90">Beautiful Place to Shop, Work, Thrive & Belong</div>
+                <div className="text-xs font-bold mb-1">BE THE</div>
+                <div className="text-sm font-bold leading-tight">Beautiful Place</div>
+                <div className="text-sm font-bold leading-tight">to Shop, Work,</div>
+                <div className="text-sm font-bold leading-tight">Thrive & Belong</div>
               </div>
             </div>
             
             {/* HOW WE MEASURE SUCCESS */}
-            <div className="mt-6 grid grid-cols-3 gap-4 text-center">
-              <div className="text-xs">
-                <div className="font-semibold">FOR OUR GUESTS</div>
-                <div className="text-xs opacity-90">Positive Experience</div>
-              </div>
-              <div className="text-xs">
-                <div className="font-semibold">FOR OUR TEAM</div>
-                <div className="text-xs opacity-90">Individual/Team Performance</div>
-              </div>
-              <div className="text-xs">
-                <div className="font-semibold">FOR OUR BUSINESS</div>
-                <div className="text-xs opacity-90">Continued Learning & Development</div>
+            <div className="mt-4 border-t border-purple-600 pt-3">
+              <div className="text-xs font-bold text-center mb-2">HOW WE MEASURE SUCCESS</div>
+              <div className="grid grid-cols-3 gap-2 text-xs">
+                <div className="text-center">
+                  <div className="font-bold">FOR OUR GUESTS</div>
+                  <div className="text-xs opacity-90">Positive Experience</div>
+                  <div className="text-xs opacity-90">Appointment Kept %</div>
+                  <div className="text-xs opacity-90">Positive NPS</div>
+                </div>
+                <div className="text-center">
+                  <div className="font-bold">FOR OUR TEAMS</div>
+                  <div className="text-xs opacity-90">Individual/Team Performance</div>
+                  <div className="text-xs opacity-90">Internal NPS</div>
+                  <div className="text-xs opacity-90">Continued Learning & Development</div>
+                </div>
+                <div className="text-center">
+                  <div className="font-bold">FOR OUR BUSINESS</div>
+                  <div className="text-xs opacity-90">Sales Achievement</div>
+                  <div className="text-xs opacity-90">Margin Achievement</div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="p-6">
+          <div className="p-4">
             <SalesTracking
               data={plannerData}
               onUpdate={handleUpdatePlanner}
@@ -134,35 +151,62 @@ export default function PlannerPage() {
               plannerEntryId={plannerData?.id}
             />
 
-            {/* Bottom sections with smaller components */}
-            <div className="grid grid-cols-2 gap-4 mt-8">
-              <div className="bg-salon-orange text-white p-3 rounded">
-                <h5 className="font-semibold text-sm mb-2">Inventory Benches</h5>
-                <textarea
-                  className="w-full bg-white text-black p-2 text-xs rounded resize-none"
-                  rows={3}
-                  value={plannerData?.inventoryBenches || ""}
-                  onChange={(e) => handleUpdatePlanner({ inventoryBenches: e.target.value })}
-                  placeholder="Track inventory levels..."
-                />
+            {/* Orange and Pink Bottom Sections */}
+            <div className="grid grid-cols-3 gap-2 mt-4">
+              <div className="bg-orange-400 text-white p-2 rounded text-xs">
+                <div className="font-bold mb-1">Inventory Benches</div>
+                <div className="bg-white text-black p-1 rounded text-xs">
+                  <div className="text-xs">Today's Reviews, Reports & Staff Assignments</div>
+                  <textarea
+                    className="w-full border-0 text-xs resize-none h-12"
+                    value={plannerData?.inventoryBenches || ""}
+                    onChange={(e) => handleUpdatePlanner({ inventoryBenches: e.target.value })}
+                    placeholder="Notes..."
+                  />
+                </div>
               </div>
               
-              <div className="bg-salon-pink text-white p-3 rounded">
-                <h5 className="font-semibold text-sm mb-2">Social Posts</h5>
-                <textarea
-                  className="w-full bg-white text-black p-2 text-xs rounded resize-none"
-                  rows={3}
-                  value={plannerData?.socialPosts || ""}
-                  onChange={(e) => handleUpdatePlanner({ socialPosts: e.target.value })}
-                  placeholder="Post content..."
-                />
+              <div className="bg-orange-400 text-white p-2 rounded text-xs">
+                <div className="font-bold mb-1">Upcoming Education</div>
+                <div className="bg-white text-black p-1 rounded text-xs">
+                  <div className="text-xs">Classes</div>
+                  <textarea
+                    className="w-full border-0 text-xs resize-none h-12"
+                    value={plannerData?.upcomingEducation || ""}
+                    onChange={(e) => handleUpdatePlanner({ upcomingEducation: e.target.value })}
+                    placeholder="Class details..."
+                  />
+                </div>
               </div>
+
+              <div className="bg-orange-400 text-white p-2 rounded text-xs">
+                <div className="font-bold mb-1">Education To Sold</div>
+                <div className="bg-white text-black p-1 rounded text-xs">
+                  <div className="text-xs">Date | Class Name | Store #</div>
+                  <textarea
+                    className="w-full border-0 text-xs resize-none h-12"
+                    value={plannerData?.educationToSold || ""}
+                    onChange={(e) => handleUpdatePlanner({ educationToSold: e.target.value })}
+                    placeholder="Education tracking..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-pink-400 text-white p-2 rounded text-xs mt-2">
+              <div className="font-bold mb-1">Social Posts/Community Connection</div>
+              <textarea
+                className="w-full bg-white text-black p-1 text-xs rounded resize-none h-16"
+                value={plannerData?.socialPosts || ""}
+                onChange={(e) => handleUpdatePlanner({ socialPosts: e.target.value })}
+                placeholder="Social media posts and community engagement..."
+              />
             </div>
           </div>
         </Card>
 
         {/* Right Page: Today's Plan */}
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden bg-white shadow-xl">
           <TodaysPlan
             data={plannerData}
             onUpdate={handleUpdatePlanner}

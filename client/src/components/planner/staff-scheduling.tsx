@@ -1,4 +1,5 @@
 import { useState } from "react";
+import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -67,101 +68,80 @@ export default function StaffScheduling({ schedules, plannerEntryId }: StaffSche
   };
 
   return (
-    <div className="mt-8">
-      <div className="flex justify-between items-center mb-4">
-        <h4 className="font-semibold text-salon-purple">Staff Scheduling</h4>
-        <Button
-          onClick={handleAddStaff}
-          size="sm"
-          className="bg-salon-purple hover:bg-salon-light-purple"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Staff
-        </Button>
-      </div>
-      
-      <div className="grid grid-cols-6 gap-2">
-        {/* Header */}
-        <div className="bg-gray-100 p-2 text-center font-semibold text-sm">Name</div>
-        <div className="bg-gray-100 p-2 text-center font-semibold text-sm">8-9am</div>
-        <div className="bg-gray-100 p-2 text-center font-semibold text-sm">9-12pm</div>
-        <div className="bg-gray-100 p-2 text-center font-semibold text-sm">12-4pm</div>
-        <div className="bg-gray-100 p-2 text-center font-semibold text-sm">4-8pm</div>
-        <div className="bg-gray-100 p-2 text-center font-semibold text-sm">Actions</div>
+    <div className="mt-4">
+      {/* Staff Scheduling Grid - Exact Match to Physical Planner */}
+      <div className="grid grid-cols-5 gap-px text-xs">
+        {/* Header Row */}
+        <div className="bg-blue-200 p-1 text-center font-bold">Name</div>
+        <div className="bg-blue-200 p-1 text-center font-bold">8-3pm</div>
+        <div className="bg-blue-200 p-1 text-center font-bold">1pm-9p</div>
+        <div className="bg-blue-200 p-1 text-center font-bold">Lunch</div>
+        <div className="bg-blue-200 p-1 text-center font-bold">1 Break</div>
         
-        {/* Staff Rows */}
+        {/* Sample Staff Rows from Physical Planner */}
+        <Input className="text-xs h-6 text-center border-0" placeholder="Kristyman" />
+        <Input className="text-xs h-6 text-center border-0" placeholder="8-3pm" />
+        <Input className="text-xs h-6 text-center border-0" placeholder="lunch" />
+        <Input className="text-xs h-6 text-center border-0" placeholder="Lunch" />
+        <Input className="text-xs h-6 text-center border-0" placeholder="1 Break" />
+        
+        <Input className="text-xs h-6 text-center border-0" placeholder="Jackie" />
+        <Input className="text-xs h-6 text-center border-0" placeholder="1pm-9p" />
+        <Input className="text-xs h-6 text-center border-0" placeholder="Lunch" />
+        <Input className="text-xs h-6 text-center border-0" placeholder="break" />
+        <Input className="text-xs h-6 text-center border-0" placeholder="1 break" />
+        
+        <Input className="text-xs h-6 text-center border-0" placeholder="Shel" />
+        <Input className="text-xs h-6 text-center border-0" placeholder="10-6:30" />
+        <Input className="text-xs h-6 text-center border-0" placeholder="Lunch" />
+        <Input className="text-xs h-6 text-center border-0" placeholder="break" />
+        <Input className="text-xs h-6 text-center border-0" placeholder="1 break" />
+        
+        {/* Additional dynamic rows for existing schedules */}
         {schedules.map((schedule: any) => (
-          <>
+          <React.Fragment key={schedule.id}>
             <Input
-              key={`name-${schedule.id}`}
               value={schedule.staffName}
               onChange={(e) => handleUpdateSchedule(schedule.id, "staffName", e.target.value)}
-              className="text-sm h-10"
+              className="text-xs h-6 text-center border-0"
               placeholder="Staff Name"
             />
-            <Select
+            <Input
               value={schedule.slot8to9}
-              onValueChange={(value) => handleUpdateSchedule(schedule.id, "slot8to9", value)}
-            >
-              <SelectTrigger className="h-10 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Open">Open</SelectItem>
-                <SelectItem value="Scheduled">Scheduled</SelectItem>
-                <SelectItem value="Break">Break</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select
+              onChange={(e) => handleUpdateSchedule(schedule.id, "slot8to9", e.target.value)}
+              className="text-xs h-6 text-center border-0"
+              placeholder="Shift"
+            />
+            <Input
               value={schedule.slot9to12}
-              onValueChange={(value) => handleUpdateSchedule(schedule.id, "slot9to12", value)}
-            >
-              <SelectTrigger className="h-10 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Open">Open</SelectItem>
-                <SelectItem value="Scheduled">Scheduled</SelectItem>
-                <SelectItem value="Break">Break</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select
+              onChange={(e) => handleUpdateSchedule(schedule.id, "slot9to12", e.target.value)}
+              className="text-xs h-6 text-center border-0"
+              placeholder="Lunch"
+            />
+            <Input
               value={schedule.slot12to4}
-              onValueChange={(value) => handleUpdateSchedule(schedule.id, "slot12to4", value)}
-            >
-              <SelectTrigger className="h-10 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Open">Open</SelectItem>
-                <SelectItem value="Scheduled">Scheduled</SelectItem>
-                <SelectItem value="Break">Break</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select
+              onChange={(e) => handleUpdateSchedule(schedule.id, "slot12to4", e.target.value)}
+              className="text-xs h-6 text-center border-0"
+              placeholder="Break"
+            />
+            <Input
               value={schedule.slot4to8}
-              onValueChange={(value) => handleUpdateSchedule(schedule.id, "slot4to8", value)}
-            >
-              <SelectTrigger className="h-10 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Open">Open</SelectItem>
-                <SelectItem value="Scheduled">Scheduled</SelectItem>
-                <SelectItem value="Break">Break</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              onClick={() => handleDeleteSchedule(schedule.id)}
-              variant="destructive"
-              size="sm"
-              className="h-10"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </>
+              onChange={(e) => handleUpdateSchedule(schedule.id, "slot4to8", e.target.value)}
+              className="text-xs h-6 text-center border-0"
+              placeholder="Break"
+            />
+          </React.Fragment>
         ))}
       </div>
+      
+      <Button
+        onClick={handleAddStaff}
+        size="sm"
+        className="mt-2 bg-blue-500 hover:bg-blue-600 text-xs h-6"
+      >
+        <Plus className="w-3 h-3 mr-1" />
+        Add Staff
+      </Button>
     </div>
   );
 }
