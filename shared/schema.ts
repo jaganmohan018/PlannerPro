@@ -66,7 +66,7 @@ export const storeAnalytics = pgTable("store_analytics", {
   month: text("month").notNull(), // YYYY-MM format
   
   salesTrend: decimal("sales_trend", { precision: 5, scale: 2 }),
-  staffPerformance: decimal("staff_performance", { precision: 5, 2 }),
+  staffPerformance: decimal("staff_performance", { precision: 5, scale: 2 }),
   goalProgress: decimal("goal_progress", { precision: 5, scale: 2 }),
   
   createdAt: timestamp("created_at").defaultNow(),
