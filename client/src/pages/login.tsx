@@ -1,60 +1,9 @@
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
 
 export default function LoginPage() {
-  const { toast } = useToast();
-  const [credentials, setCredentials] = useState({
-    username: "",
-    password: "",
-  });
-
-  const loginMutation = useMutation({
-    mutationFn: async (creds: typeof credentials) => {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(creds),
-      });
-      
-      if (!response.ok) {
-        throw new Error("Invalid username or password");
-      }
-      
-      return response.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "Success",
-        description: "Logged in successfully",
-      });
-      window.location.href = "/";
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Login Failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!credentials.username || !credentials.password) {
-      toast({
-        title: "Error",
-        description: "Please enter both username and password",
-        variant: "destructive",
-      });
-      return;
-    }
-    loginMutation.mutate(credentials);
+  const handleLogin = () => {
+    window.location.href = "/api/login";
   };
 
   return (
@@ -69,53 +18,29 @@ export default function LoginPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-center text-salon-purple">Login</CardTitle>
+            <CardTitle className="text-center text-salon-purple">Welcome</CardTitle>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  id="username"
-                  type="text"
-                  value={credentials.username}
-                  onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-                  placeholder="Enter your username"
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={credentials.password}
-                  onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                  placeholder="Enter your password"
-                  required
-                />
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full bg-salon-purple hover:bg-salon-light-purple"
-                disabled={loginMutation.isPending}
-              >
-                {loginMutation.isPending ? "Signing in..." : "Sign In"}
-              </Button>
-            </form>
+          <CardContent className="text-center space-y-4">
+            <p className="text-gray-600">
+              Sign in with your Replit account to access the SalonCentric store management system.
+            </p>
+            
+            <Button
+              onClick={handleLogin}
+              className="w-full bg-salon-purple hover:bg-salon-light-purple"
+            >
+              Sign In with Replit
+            </Button>
           </CardContent>
         </Card>
 
         <div className="mt-6 p-4 bg-white rounded-lg shadow">
-          <h3 className="font-bold text-salon-purple mb-2">Default Admin Account</h3>
-          <div className="text-sm text-gray-600 space-y-1">
-            <div><strong>Username:</strong> admin</div>
-            <div><strong>Password:</strong> admin123</div>
-          </div>
+          <h3 className="font-bold text-salon-purple mb-2">Authentication Info</h3>
+          <p className="text-sm text-gray-600">
+            This application uses Replit OAuth for secure authentication. Your Replit account will be used to create your user profile in the system.
+          </p>
           <p className="text-xs text-gray-500 mt-2">
-            Use these credentials to access the admin dashboard and manage users/stores.
+            New users will be assigned the "Store Associate" role by default. Contact your administrator to upgrade permissions.
           </p>
         </div>
       </div>
