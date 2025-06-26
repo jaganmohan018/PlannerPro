@@ -18,7 +18,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/stores/:id", async (req, res) => {
+  app.get("/api/stores/:id", requireAuth, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const store = await storage.getStore(id);
@@ -31,7 +31,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/stores", async (req, res) => {
+  app.post("/api/stores", requireRole('business_executive'), async (req, res) => {
     try {
       const storeData = insertStoreSchema.parse(req.body);
       const store = await storage.createStore(storeData);
@@ -42,7 +42,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Planner entry routes
-  app.get("/api/planner/:storeId/:date", async (req, res) => {
+  app.get("/api/planner/:storeId/:date", requireAuth, async (req, res) => {
     try {
       const storeId = parseInt(req.params.storeId);
       const date = req.params.date;
@@ -96,7 +96,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/planner/:id", async (req, res) => {
+  app.put("/api/planner/:id", requireAuth, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const updateData = req.body;
@@ -108,7 +108,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/planner-history/:storeId", async (req, res) => {
+  app.get("/api/planner-history/:storeId", requireAuth, async (req, res) => {
     try {
       const storeId = parseInt(req.params.storeId);
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 30;
@@ -121,7 +121,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Staff schedule routes
-  app.post("/api/staff-schedules", async (req, res) => {
+  app.post("/api/staff-schedules", requireAuth, async (req, res) => {
     try {
       const scheduleData = insertStaffScheduleSchema.parse(req.body);
       const schedule = await storage.createStaffSchedule(scheduleData);
@@ -131,7 +131,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/staff-schedules/:id", async (req, res) => {
+  app.put("/api/staff-schedules/:id", requireAuth, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const updateData = req.body;
@@ -143,7 +143,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/staff-schedules/:id", async (req, res) => {
+  app.delete("/api/staff-schedules/:id", requireAuth, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       await storage.deleteStaffSchedule(id);
