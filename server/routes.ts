@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated, requireRole, requireStoreAccess } from "./replitAuth";
+import { setupAuth, isAuthenticated, requireRole, requireStoreAccess } from "./auth";
 import { insertStoreSchema, insertPlannerEntrySchema, insertStaffScheduleSchema, insertUserSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {

@@ -17,11 +17,12 @@ export const sessions = pgTable(
 
 // User storage table with role-based access control
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey().notNull(),
+  id: serial("id").primaryKey(),
+  username: varchar("username").unique().notNull(),
+  password: varchar("password").notNull(),
   email: varchar("email").unique(),
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
-  profileImageUrl: varchar("profile_image_url"),
   role: varchar("role").notNull().default("store_associate"), // store_associate, district_manager, admin
   storeId: integer("store_id"), // null for district_managers and admins
   createdAt: timestamp("created_at").defaultNow(),
