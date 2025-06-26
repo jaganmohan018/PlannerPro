@@ -67,7 +67,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/stores/:id", async (req, res) => {
+  app.get("/api/stores/:id", isAuthenticated, requireStoreAccess('id'), async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const store = await storage.getStore(id);
@@ -80,7 +80,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/stores", async (req, res) => {
+  app.post("/api/stores", isAuthenticated, requireRole(['admin']), async (req, res) => {
     try {
       const storeData = insertStoreSchema.parse(req.body);
       const store = await storage.createStore(storeData);
@@ -90,8 +90,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Planner entry routes
-  app.get("/api/planner/:storeId/:date", async (req, res) => {
+  // Planner entry routes with role-based access
+  app.get("/api/planner/:storeId/:date", isAuthenticated, requireStoreAccess('storeId'), async (req, res) => {
     try {
       const storeId = parseInt(req.params.storeId);
       const date = req.params.date;
