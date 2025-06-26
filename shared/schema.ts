@@ -17,9 +17,9 @@ export const sessions = pgTable(
 
 // User storage table with role-based access control
 export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  username: varchar("username").unique().notNull(),
-  password: varchar("password").notNull(),
+  id: varchar("id").primaryKey(),
+  username: varchar("username").unique(),
+  password: varchar("password"),
   email: varchar("email").unique(),
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
