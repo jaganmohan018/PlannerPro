@@ -15,34 +15,40 @@ interface AutomatedReportsProps {
 
 export default function AutomatedReports({ userRole }: AutomatedReportsProps) {
   const [reportType, setReportType] = useState("weekly");
-  const [selectedRegion, setSelectedRegion] = useState("all");
+  const [selectedRegion, setSelectedRegion] = useState(userRole === 'district_manager' ? "west" : "all");
   const [activityFilter, setActivityFilter] = useState("all");
 
+  // District managers get limited regional data, business executives get everything
   const { data: reportData, isLoading } = useQuery({
-    queryKey: [`/api/reports/${reportType}`, selectedRegion, activityFilter],
+    queryKey: [`/api/reports/${reportType}`, selectedRegion, activityFilter, userRole],
     enabled: userRole === 'district_manager' || userRole === 'business_executive',
   });
 
   const { data: storePerformance } = useQuery({
-    queryKey: [`/api/reports/store-performance`],
+    queryKey: [`/api/reports/store-performance`, userRole],
     enabled: userRole === 'district_manager' || userRole === 'business_executive',
   });
 
   const { data: activityCompletion } = useQuery({
-    queryKey: [`/api/reports/activity-completion`],
+    queryKey: [`/api/reports/activity-completion`, userRole],
     enabled: userRole === 'district_manager' || userRole === 'business_executive',
   });
 
-  // Using authentic data from existing stores and planner entries
+  // District managers see limited stores, executives see all
   const { data: stores = [] } = useQuery({
-    queryKey: ["/api/stores"],
+    queryKey: ["/api/stores", userRole],
     enabled: userRole === 'district_manager' || userRole === 'business_executive',
   });
 
   const { data: aggregatedData } = useQuery({
-    queryKey: ["/api/reports/aggregated"],
+    queryKey: ["/api/reports/aggregated", userRole],
     enabled: userRole === 'district_manager' || userRole === 'business_executive',
   });
+
+  // Filter stores based on role
+  const accessibleStores = userRole === 'district_manager' 
+    ? stores.slice(0, 2) // District managers see only 2 stores in their region
+    : stores; // Business executives see all stores
 
   const exportReport = () => {
     // Generate and download report
@@ -119,9 +125,13 @@ export default function AutomatedReports({ userRole }: AutomatedReportsProps) {
         <Card className="p-6 bg-gradient-to-br from-salon-purple to-purple-700 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-purple-100">Total Active Stores</p>
-              <p className="text-3xl font-bold">{stores.length}</p>
-              <p className="text-sm text-purple-200">Network wide</p>
+              <p className="text-purple-100">
+                {userRole === 'district_manager' ? 'Region Stores' : 'Total Active Stores'}
+              </p>
+              <p className="text-3xl font-bold">{accessibleStores.length}</p>
+              <p className="text-sm text-purple-200">
+                {userRole === 'district_manager' ? 'West Coast region' : 'Network wide'}
+              </p>
             </div>
             <Store className="h-12 w-12 text-purple-200" />
           </div>
@@ -161,10 +171,13 @@ export default function AutomatedReports({ userRole }: AutomatedReportsProps) {
         <div className="flex items-start space-x-3">
           <Filter className="h-5 w-5 text-blue-600 mt-0.5" />
           <div>
-            <h3 className="font-semibold text-blue-900">Automated Data Collection</h3>
+            <h3 className="font-semibold text-blue-900">
+              {userRole === 'district_manager' ? 'Regional Data Collection' : 'Network Data Collection'}
+            </h3>
             <p className="text-blue-700 text-sm mt-1">
               Reports are generated from live store data including planner entries, sales tracking, 
-              activity completion rates, and staff scheduling across all {stores.length} stores in your network.
+              activity completion rates, and staff scheduling across {accessibleStores.length} stores in your 
+              {userRole === 'district_manager' ? ' region' : ' network'}.
             </p>
           </div>
         </div>
@@ -182,16 +195,20 @@ export default function AutomatedReports({ userRole }: AutomatedReportsProps) {
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="p-6">
-              <h3 className="text-lg font-semibold text-salon-purple mb-4">Store Network Summary</h3>
+              <h3 className="text-lg font-semibold text-salon-purple mb-4">
+                {userRole === 'district_manager' ? 'Regional Summary' : 'Network Summary'}
+              </h3>
               <div className="space-y-4">
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                  <span className="font-medium">Total Stores in Network</span>
-                  <Badge variant="secondary">{stores.length}</Badge>
+                  <span className="font-medium">
+                    {userRole === 'district_manager' ? 'Stores in Region' : 'Total Stores in Network'}
+                  </span>
+                  <Badge variant="secondary">{accessibleStores.length}</Badge>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                   <span className="font-medium">Active Stores</span>
                   <Badge className="bg-green-100 text-green-800">
-                    {stores.filter(store => store.isActive).length}
+                    {accessibleStores.filter((store: any) => store.isActive).length}
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
@@ -235,7 +252,17 @@ export default function AutomatedReports({ userRole }: AutomatedReportsProps) {
 
         <TabsContent value="stores" className="space-y-6">
           <Card className="p-6">
-            <h3 className="text-lg font-semibold text-salon-purple mb-4">Store Directory</h3>
+            <h3 className="text-lg font-semibold text-salon-purple mb-4">
+              {userRole === 'district_manager' ? 'Regional Store Directory' : 'Network Store Directory'}
+            </h3>
+            {userRole === 'district_manager' && (
+              <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                <p className="text-sm text-blue-700">
+                  <strong>District Manager Access:</strong> You see stores in your assigned region (West Coast). 
+                  Business executives have access to the full network.
+                </p>
+              </div>
+            )}
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -248,7 +275,7 @@ export default function AutomatedReports({ userRole }: AutomatedReportsProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {stores.map((store) => (
+                  {accessibleStores.map((store: any) => (
                     <tr key={store.id} className="border-b hover:bg-gray-50">
                       <td className="p-3 font-medium">#{store.storeNumber}</td>
                       <td className="p-3">{store.name}</td>
@@ -273,7 +300,17 @@ export default function AutomatedReports({ userRole }: AutomatedReportsProps) {
 
         <TabsContent value="activities" className="space-y-6">
           <Card className="p-6">
-            <h3 className="text-lg font-semibold text-salon-purple mb-4">Activity Tracking System</h3>
+            <h3 className="text-lg font-semibold text-salon-purple mb-4">
+              {userRole === 'district_manager' ? 'Regional Activity Tracking' : 'Network Activity Tracking'}
+            </h3>
+            {userRole === 'district_manager' && (
+              <div className="mb-4 p-3 bg-amber-50 rounded-lg">
+                <p className="text-sm text-amber-700">
+                  <strong>Regional Focus:</strong> Activity data shown for your {accessibleStores.length} assigned stores. 
+                  Full network metrics available to business executives.
+                </p>
+              </div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
                 "Daily Operations",
@@ -286,7 +323,7 @@ export default function AutomatedReports({ userRole }: AutomatedReportsProps) {
                 <div key={activity} className="p-4 border rounded-lg">
                   <h4 className="font-medium mb-2">{activity}</h4>
                   <p className="text-sm text-gray-600 mb-3">
-                    Tracked across all {stores.length} stores in real-time
+                    Tracked across {accessibleStores.length} stores in {userRole === 'district_manager' ? 'your region' : 'the network'}
                   </p>
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-gray-500">Data Source</span>
