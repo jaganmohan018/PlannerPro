@@ -109,30 +109,7 @@ This is a full-stack web application built for SalonCentric store managers to tr
 ## Changelog
 
 - June 25, 2025. Initial setup
-- June 26, 2025. Implemented role-based access control system with three user tiers:
-  * Store Associates: Access to daily planner for their assigned store
-  * District Managers: Multi-store analytics and performance insights  
-  * Administrators: Complete system management and user role assignment
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
-
-## Role-Based Access Control
-
-### User Roles
-1. **Store Associates**: Access daily planner functionality for assigned store only
-2. **District Managers**: Access analytics dashboard and multi-store insights for assigned stores
-3. **Administrators**: Full system access including user management, store creation, and role assignments
-
-### Authentication Flow
-- Landing page for unauthenticated users with role descriptions
-- Replit OAuth integration for secure authentication
-- Role-based routing and component access control
-- Store-level access permissions enforced on both frontend and backend
-
-### Admin Features
-- User role management interface
-- Store creation and assignment capabilities
-- District manager store assignment management
-- System overview with user and store metrics
