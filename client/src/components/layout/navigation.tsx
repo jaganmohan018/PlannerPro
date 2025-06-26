@@ -31,7 +31,8 @@ export default function Navigation() {
   }
 
   // Role-based navigation items
-  const canViewDashboard = user.role === 'district_manager' || user.role === 'business_executive';
+  const isStoreAssociate = user.role === 'store_associate';
+  const isManagement = user.role === 'district_manager' || user.role === 'business_executive';
 
   return (
     <nav className="bg-salon-purple text-white shadow-lg no-print">
@@ -44,49 +45,59 @@ export default function Navigation() {
           
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <Link href="/planner">
-                <Button
-                  variant={location === "/" || location === "/planner" ? "secondary" : "ghost"}
-                  size="sm"
-                  className={cn(
-                    "text-white hover:bg-salon-light-purple",
-                    (location === "/" || location === "/planner") && "bg-white text-salon-purple hover:bg-gray-100"
-                  )}
-                >
-                  <FileText className="w-4 h-4 mr-2" />
-                  Planner
-                </Button>
-              </Link>
-              
-              {canViewDashboard && (
-                <Link href="/dashboard">
+              {isStoreAssociate && (
+                <Link href="/planner">
                   <Button
-                    variant={location === "/dashboard" ? "secondary" : "ghost"}
+                    variant={location === "/" || location === "/planner" ? "secondary" : "ghost"}
                     size="sm"
                     className={cn(
                       "text-white hover:bg-salon-light-purple",
-                      location === "/dashboard" && "bg-white text-salon-purple hover:bg-gray-100"
+                      (location === "/" || location === "/planner") && "bg-white text-salon-purple hover:bg-gray-100"
+                    )}
+                  >
+                    <FileText className="w-4 h-4 mr-2" />
+                    Daily Planner
+                  </Button>
+                </Link>
+              )}
+              
+              {isManagement && (
+                <Link href="/dashboard">
+                  <Button
+                    variant={location === "/" || location === "/dashboard" ? "secondary" : "ghost"}
+                    size="sm"
+                    className={cn(
+                      "text-white hover:bg-salon-light-purple",
+                      (location === "/" || location === "/dashboard") && "bg-white text-salon-purple hover:bg-gray-100"
                     )}
                   >
                     <ChartLine className="w-4 h-4 mr-2" />
-                    Analytics
+                    Store Analytics
                   </Button>
                 </Link>
               )}
             </div>
 
-            <Select value={selectedStore} onValueChange={setSelectedStore}>
-              <SelectTrigger className="w-48 bg-salon-light-purple text-white border-none">
-                <SelectValue placeholder="Select Store" />
-              </SelectTrigger>
-              <SelectContent>
-                {Array.isArray(stores) && stores.map((store: any) => (
-                  <SelectItem key={store.id} value={store.id.toString()}>
-                    Store #{store.storeNumber} - {store.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {isStoreAssociate && (
+              <Select value={selectedStore} onValueChange={setSelectedStore}>
+                <SelectTrigger className="w-48 bg-salon-light-purple text-white border-none">
+                  <SelectValue placeholder="Select Store" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.isArray(stores) && stores.map((store: any) => (
+                    <SelectItem key={store.id} value={store.id.toString()}>
+                      Store #{store.storeNumber} - {store.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+
+            {isManagement && (
+              <div className="text-sm text-white">
+                <span className="opacity-90">Multi-Store Analytics</span>
+              </div>
+            )}
 
             <Button
               onClick={handlePrint}
