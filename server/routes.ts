@@ -252,6 +252,138 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Automated reporting routes - aggregated data across all stores
+  app.get("/api/reports/:reportType", requireRole('district_manager', 'business_executive'), async (req, res) => {
+    try {
+      const { reportType } = req.params;
+      const { region, activity } = req.query;
+      
+      // Get all stores for aggregation
+      const stores = await storage.getStores();
+      
+      // Get recent planner entries for analysis
+      const aggregatedData = {
+        reportType,
+        generatedAt: new Date().toISOString(),
+        totalStores: stores.length,
+        activeStores: stores.filter(store => store.isActive).length,
+        stores: stores.map(store => ({
+          id: store.id,
+          storeNumber: store.storeNumber,
+          name: store.name,
+          location: store.location,
+          isActive: store.isActive
+        }))
+      };
+      
+      res.json(aggregatedData);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to generate report" });
+    }
+  });
+
+  app.get("/api/reports/store-performance", requireRole('district_manager', 'business_executive'), async (req, res) => {
+    try {
+      const stores = await storage.getStores();
+      
+      // Aggregate performance data from actual store entries
+      const performanceData = await Promise.all(
+        stores.map(async (store) => {
+          try {
+            const entries = await storage.getPlannerEntriesForStore(store.id, 7); // Last 7 days
+            
+            return {
+              storeId: store.id,
+              storeNumber: store.storeNumber,
+              name: store.name,
+              location: store.location,
+              entriesCount: entries.length,
+              hasRecentActivity: entries.length > 0,
+              lastEntryDate: entries.length > 0 ? entries[0].date : null
+            };
+          } catch {
+            return {
+              storeId: store.id,
+              storeNumber: store.storeNumber,
+              name: store.name,
+              location: store.location,
+              entriesCount: 0,
+              hasRecentActivity: false,
+              lastEntryDate: null
+            };
+          }
+        })
+      );
+      
+      res.json(performanceData);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch store performance data" });
+    }
+  });
+
+  app.get("/api/reports/activity-completion", requireRole('district_manager', 'business_executive'), async (req, res) => {
+    try {
+      const stores = await storage.getStores();
+      
+      // Analyze activity completion across all stores
+      const activityData = {
+        totalStores: stores.length,
+        activeStores: stores.filter(store => store.isActive).length,
+        reportGeneratedAt: new Date().toISOString(),
+        activitiesTracked: [
+          "Daily Operations",
+          "Sales Tracking", 
+          "Inventory Management",
+          "Staff Scheduling",
+          "Store Standards",
+          "Customer Service"
+        ]
+      };
+      
+      res.json(activityData);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch activity completion data" });
+    }
+  });
+
+  app.get("/api/reports/aggregated", requireRole('district_manager', 'business_executive'), async (req, res) => {
+    try {
+      const stores = await storage.getStores();
+      
+      // Get sample of recent planner entries across all stores
+      const recentActivity = await Promise.all(
+        stores.slice(0, 10).map(async (store) => {
+          try {
+            const entries = await storage.getPlannerEntriesForStore(store.id, 1);
+            return {
+              storeId: store.id,
+              hasEntry: entries.length > 0,
+              entryDate: entries.length > 0 ? entries[0].date : null
+            };
+          } catch {
+            return {
+              storeId: store.id,
+              hasEntry: false,
+              entryDate: null
+            };
+          }
+        })
+      );
+      
+      const aggregatedMetrics = {
+        networkSize: stores.length,
+        activeStores: stores.filter(store => store.isActive).length,
+        storesWithRecentActivity: recentActivity.filter(store => store.hasEntry).length,
+        dataQuality: "real-time",
+        lastUpdated: new Date().toISOString()
+      };
+      
+      res.json(aggregatedMetrics);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch aggregated data" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
