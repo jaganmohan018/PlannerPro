@@ -1,16 +1,30 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/use-auth";
+import { Redirect } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency, formatPercentage } from "@/lib/utils";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [selectedStore, setSelectedStore] = useState("all");
   const [timeRange, setTimeRange] = useState("30d");
 
+  // Redirect store associates to planner
+  if (user && user.role === 'store_associate') {
+    return <Redirect to="/planner" />;
+  }
+
+  // Only allow management roles
+  if (user && user.role !== 'district_manager' && user.role !== 'business_executive') {
+    return <Redirect to="/auth" />;
+  }
+
   const { data: stores = [] } = useQuery({
     queryKey: ["/api/stores"],
+    enabled: user?.role === 'district_manager' || user?.role === 'business_executive',
   });
 
   // Mock analytics data - in a real app this would come from API

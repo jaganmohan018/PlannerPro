@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/use-auth";
+import { Redirect } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { getCurrentDate, formatDate } from "@/lib/utils";
@@ -8,12 +10,17 @@ import SalesTracking from "@/components/planner/sales-tracking";
 import StaffScheduling from "@/components/planner/staff-scheduling";
 import ActivitySection from "@/components/planner/activity-section";
 import TodaysPlan from "@/components/planner/todays-plan";
-import AnalyticsDashboard from "@/components/planner/analytics-dashboard";
 
 export default function PlannerPage() {
+  const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(getCurrentDate());
   const [selectedStore] = useState(1); // TODO: Get from context/navigation
   const queryClient = useQueryClient();
+
+  // Redirect non-store associates to dashboard
+  if (user && user.role !== 'store_associate') {
+    return <Redirect to="/dashboard" />;
+  }
 
   const { data: plannerData, isLoading } = useQuery({
     queryKey: [`/api/planner/${selectedStore}/${selectedDate}`],
@@ -214,8 +221,6 @@ export default function PlannerPage() {
           />
         </Card>
       </div>
-
-      <AnalyticsDashboard storeId={selectedStore} />
     </div>
   );
 }
