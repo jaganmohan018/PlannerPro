@@ -3,20 +3,35 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
-import { Scissors, ChartLine, FileText, Printer } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { Scissors, ChartLine, FileText, Printer, LogOut, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function Navigation() {
   const [location] = useLocation();
   const [selectedStore, setSelectedStore] = useState<string>("1");
+  const { user, logoutMutation } = useAuth();
 
-  const { data: stores = [] } = useQuery({
+  const { data: stores = [] } = useQuery<any[]>({
     queryKey: ["/api/stores"],
+    enabled: !!user, // Only fetch stores if user is authenticated
   });
 
   const handlePrint = () => {
     window.print();
   };
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
+
+  // Don't show navigation if user is not authenticated
+  if (!user) {
+    return null;
+  }
+
+  // Role-based navigation items
+  const canViewDashboard = user.role === 'district_manager' || user.role === 'business_executive';
 
   return (
     <nav className="bg-salon-purple text-white shadow-lg no-print">
@@ -43,19 +58,21 @@ export default function Navigation() {
                 </Button>
               </Link>
               
-              <Link href="/dashboard">
-                <Button
-                  variant={location === "/dashboard" ? "secondary" : "ghost"}
-                  size="sm"
-                  className={cn(
-                    "text-white hover:bg-salon-light-purple",
-                    location === "/dashboard" && "bg-white text-salon-purple hover:bg-gray-100"
-                  )}
-                >
-                  <ChartLine className="w-4 h-4 mr-2" />
-                  Dashboard
-                </Button>
-              </Link>
+              {canViewDashboard && (
+                <Link href="/dashboard">
+                  <Button
+                    variant={location === "/dashboard" ? "secondary" : "ghost"}
+                    size="sm"
+                    className={cn(
+                      "text-white hover:bg-salon-light-purple",
+                      location === "/dashboard" && "bg-white text-salon-purple hover:bg-gray-100"
+                    )}
+                  >
+                    <ChartLine className="w-4 h-4 mr-2" />
+                    Analytics
+                  </Button>
+                </Link>
+              )}
             </div>
 
             <Select value={selectedStore} onValueChange={setSelectedStore}>
@@ -79,6 +96,22 @@ export default function Navigation() {
               <Printer className="w-4 h-4 mr-2" />
               Print
             </Button>
+
+            <div className="flex items-center space-x-2">
+              <div className="text-sm">
+                <span className="opacity-90">{user.firstName} {user.lastName}</span>
+                <div className="text-xs opacity-75 capitalize">{user.role.replace('_', ' ')}</div>
+              </div>
+              <Button
+                onClick={handleLogout}
+                size="sm"
+                variant="ghost"
+                className="text-white hover:bg-salon-light-purple"
+                disabled={logoutMutation.isPending}
+              >
+                <LogOut className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
