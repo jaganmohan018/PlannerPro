@@ -1,7 +1,40 @@
-import { pgTable, text, serial, integer, boolean, timestamp, decimal, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, decimal, jsonb, varchar, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+
+// Session storage table.
+// (IMPORTANT) This table is mandatory for Replit Auth, don't drop it.
+export const sessions = pgTable(
+  "sessions",
+  {
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
+    expire: timestamp("expire").notNull(),
+  },
+  (table) => [index("IDX_session_expire").on(table.expire)],
+);
+
+// User storage table with role-based access control
+export const users = pgTable("users", {
+  id: varchar("id").primaryKey().notNull(),
+  email: varchar("email").unique(),
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
+  profileImageUrl: varchar("profile_image_url"),
+  role: varchar("role").notNull().default("store_associate"), // store_associate, district_manager, admin
+  storeId: integer("store_id"), // null for district_managers and admins
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// User-Store assignments for district managers (many-to-many)
+export const userStoreAssignments = pgTable("user_store_assignments", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  storeId: integer("store_id").notNull().references(() => stores.id),
+  createdAt: timestamp("created_at").defaultNow(),
+});
 
 export const stores = pgTable("stores", {
   id: serial("id").primaryKey(),
@@ -73,9 +106,30 @@ export const storeAnalytics = pgTable("store_analytics", {
 });
 
 // Relations
+export const usersRelations = relations(users, ({ one, many }) => ({
+  store: one(stores, {
+    fields: [users.storeId],
+    references: [stores.id],
+  }),
+  storeAssignments: many(userStoreAssignments),
+}));
+
+export const userStoreAssignmentsRelations = relations(userStoreAssignments, ({ one }) => ({
+  user: one(users, {
+    fields: [userStoreAssignments.userId],
+    references: [users.id],
+  }),
+  store: one(stores, {
+    fields: [userStoreAssignments.storeId],
+    references: [stores.id],
+  }),
+}));
+
 export const storesRelations = relations(stores, ({ many }) => ({
   plannerEntries: many(plannerEntries),
   analytics: many(storeAnalytics),
+  users: many(users),
+  userAssignments: many(userStoreAssignments),
 }));
 
 export const plannerEntriesRelations = relations(plannerEntries, ({ one, many }) => ({
@@ -121,7 +175,23 @@ export const insertStoreAnalyticsSchema = createInsertSchema(storeAnalytics).omi
   createdAt: true,
 });
 
+// Insert schemas
+export const insertUserSchema = createInsertSchema(users).omit({
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertUserStoreAssignmentSchema = createInsertSchema(userStoreAssignments).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
+export type User = typeof users.$inferSelect;
+export type UpsertUser = typeof users.$inferInsert;
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type UserStoreAssignment = typeof userStoreAssignments.$inferSelect;
+export type InsertUserStoreAssignment = z.infer<typeof insertUserStoreAssignmentSchema>;
 export type Store = typeof stores.$inferSelect;
 export type InsertStore = z.infer<typeof insertStoreSchema>;
 export type PlannerEntry = typeof plannerEntries.$inferSelect;

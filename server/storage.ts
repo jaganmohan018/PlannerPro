@@ -1,16 +1,48 @@
-import { stores, plannerEntries, staffSchedules, storeAnalytics, type Store, type InsertStore, type PlannerEntry, type InsertPlannerEntry, type StaffSchedule, type InsertStaffSchedule, type StoreAnalytics, type InsertStoreAnalytics } from "@shared/schema";
+import { 
+  stores, 
+  plannerEntries, 
+  staffSchedules, 
+  storeAnalytics, 
+  users, 
+  userStoreAssignments,
+  type Store, 
+  type InsertStore, 
+  type PlannerEntry, 
+  type InsertPlannerEntry, 
+  type StaffSchedule, 
+  type InsertStaffSchedule, 
+  type StoreAnalytics, 
+  type InsertStoreAnalytics,
+  type User,
+  type UpsertUser,
+  type UserStoreAssignment,
+  type InsertUserStoreAssignment
+} from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, inArray } from "drizzle-orm";
 
 export interface IStorage {
-  // Store operations
+  // User operations (mandatory for Replit Auth)
+  getUser(id: string): Promise<User | undefined>;
+  upsertUser(user: UpsertUser): Promise<User>;
+  
+  // Role-based user management
+  getUsersByRole(role: string): Promise<User[]>;
+  updateUserRole(userId: string, role: string, storeId?: number): Promise<User>;
+  getStoreAssignments(userId: string): Promise<UserStoreAssignment[]>;
+  addStoreAssignment(assignment: InsertUserStoreAssignment): Promise<UserStoreAssignment>;
+  removeStoreAssignment(userId: string, storeId: number): Promise<void>;
+  
+  // Store operations (with access control)
   getStores(): Promise<Store[]>;
+  getStoresForUser(userId: string, userRole: string): Promise<Store[]>;
   getStore(id: number): Promise<Store | undefined>;
   createStore(store: InsertStore): Promise<Store>;
   
-  // Planner entry operations
+  // Planner entry operations (with access control)
   getPlannerEntry(storeId: number, date: string): Promise<PlannerEntry | undefined>;
   getPlannerEntriesForStore(storeId: number, limit?: number): Promise<PlannerEntry[]>;
+  getPlannerEntriesForUser(userId: string, userRole: string, limit?: number): Promise<PlannerEntry[]>;
   createPlannerEntry(entry: InsertPlannerEntry): Promise<PlannerEntry>;
   updatePlannerEntry(id: number, entry: Partial<InsertPlannerEntry>): Promise<PlannerEntry>;
   
@@ -20,8 +52,9 @@ export interface IStorage {
   updateStaffSchedule(id: number, schedule: Partial<InsertStaffSchedule>): Promise<StaffSchedule>;
   deleteStaffSchedule(id: number): Promise<void>;
   
-  // Analytics operations
+  // Analytics operations (district managers and admins only)
   getStoreAnalytics(storeId: number): Promise<StoreAnalytics[]>;
+  getMultiStoreAnalytics(storeIds: number[]): Promise<StoreAnalytics[]>;
   createStoreAnalytics(analytics: InsertStoreAnalytics): Promise<StoreAnalytics>;
 }
 
