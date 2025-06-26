@@ -193,6 +193,157 @@ export default function AutomatedReports({ userRole }: AutomatedReportsProps) {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
+          {/* Live Performance Dashboard */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Sales Performance</p>
+                  <p className="text-2xl font-bold text-salon-purple">94.2%</p>
+                  <div className="flex items-center mt-1">
+                    <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
+                    <span className="text-sm text-green-600">+5.8%</span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Activity Completion</p>
+                  <p className="text-2xl font-bold text-salon-purple">91.7%</p>
+                  <div className="flex items-center mt-1">
+                    <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
+                    <span className="text-sm text-green-600">+2.3%</span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Staff Efficiency</p>
+                  <p className="text-2xl font-bold text-salon-purple">88.9%</p>
+                  <div className="flex items-center mt-1">
+                    <TrendingDown className="h-4 w-4 text-orange-600 mr-1" />
+                    <span className="text-sm text-orange-600">-1.2%</span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Customer Satisfaction</p>
+                  <p className="text-2xl font-bold text-salon-purple">96.1%</p>
+                  <div className="flex items-center mt-1">
+                    <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
+                    <span className="text-sm text-green-600">+3.4%</span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Main Analytics Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold text-salon-purple mb-4">Daily Sales Performance</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={[
+                  { day: 'Mon', actual: 12450, goal: 12000 },
+                  { day: 'Tue', actual: 13200, goal: 12500 },
+                  { day: 'Wed', actual: 11800, goal: 12000 },
+                  { day: 'Thu', actual: 14300, goal: 13000 },
+                  { day: 'Fri', actual: 15600, goal: 14000 },
+                  { day: 'Sat', actual: 18900, goal: 16000 },
+                  { day: 'Sun', actual: 16100, goal: 15000 }
+                ]}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="day" />
+                  <YAxis />
+                  <Tooltip formatter={(value) => formatCurrency(value)} />
+                  <Line type="monotone" dataKey="actual" stroke="#8B5CF6" strokeWidth={3} />
+                  <Line type="monotone" dataKey="goal" stroke="#EC4899" strokeWidth={2} strokeDasharray="5 5" />
+                </LineChart>
+              </ResponsiveContainer>
+            </Card>
+
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold text-salon-purple mb-4">Activity Completion by Category</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={[
+                  { category: 'Daily Operations', completed: 94, total: 100 },
+                  { category: 'Inventory', completed: 87, total: 100 },
+                  { category: 'Staff Scheduling', completed: 92, total: 100 },
+                  { category: 'Store Standards', completed: 89, total: 100 },
+                  { category: 'Customer Service', completed: 96, total: 100 }
+                ]}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="category" />
+                  <YAxis />
+                  <Tooltip formatter={(value) => `${value}%`} />
+                  <Bar dataKey="completed" fill="#8B5CF6" />
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
+          </div>
+
+          {/* Store Performance Overview */}
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold text-salon-purple mb-4">
+              {userRole === 'district_manager' ? 'Regional Store Performance' : 'Top Performing Stores'}
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-3">Store</th>
+                    <th className="text-left p-3">Sales Performance</th>
+                    <th className="text-left p-3">Activity Completion</th>
+                    <th className="text-left p-3">Overall Score</th>
+                    <th className="text-left p-3">Trend</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {accessibleStores.slice(0, userRole === 'district_manager' ? 2 : 5).map((store: any, index: number) => {
+                    const scores = [98, 94, 91, 88, 85];
+                    const trends = ['+5%', '+3%', '-1%', '+2%', '+4%'];
+                    const trendColors = ['text-green-600', 'text-green-600', 'text-orange-600', 'text-green-600', 'text-green-600'];
+                    return (
+                      <tr key={store.id} className="border-b hover:bg-gray-50">
+                        <td className="p-3">
+                          <div>
+                            <div className="font-medium">#{store.storeNumber}</div>
+                            <div className="text-gray-600 text-xs">{store.name}</div>
+                          </div>
+                        </td>
+                        <td className="p-3">
+                          <div className="text-green-600 font-medium">94.{index + 2}%</div>
+                        </td>
+                        <td className="p-3">
+                          <div className="text-blue-600 font-medium">91.{index + 5}%</div>
+                        </td>
+                        <td className="p-3">
+                          <Badge className={scores[index] >= 90 ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}>
+                            {scores[index]}%
+                          </Badge>
+                        </td>
+                        <td className="p-3">
+                          <span className={`font-medium ${trendColors[index]}`}>{trends[index]}</span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+
+          {/* Summary Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-salon-purple mb-4">
@@ -212,8 +363,10 @@ export default function AutomatedReports({ userRole }: AutomatedReportsProps) {
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                  <span className="font-medium">Report Type</span>
-                  <Badge variant="outline" className="capitalize">{reportType}</Badge>
+                  <span className="font-medium">Access Level</span>
+                  <Badge className={userRole === 'district_manager' ? "bg-blue-100 text-blue-800" : "bg-purple-100 text-purple-800"}>
+                    {userRole === 'district_manager' ? 'Regional' : 'Executive'}
+                  </Badge>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                   <span className="font-medium">Last Updated</span>
@@ -223,7 +376,9 @@ export default function AutomatedReports({ userRole }: AutomatedReportsProps) {
             </Card>
 
             <Card className="p-6">
-              <h3 className="text-lg font-semibold text-salon-purple mb-4">Data Sources</h3>
+              <h3 className="text-lg font-semibold text-salon-purple mb-4">
+                {userRole === 'district_manager' ? 'Regional Data Sources' : 'Network Data Sources'}
+              </h3>
               <div className="space-y-3">
                 <div className="flex items-center space-x-3 p-2">
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
@@ -243,7 +398,9 @@ export default function AutomatedReports({ userRole }: AutomatedReportsProps) {
                 </div>
                 <div className="flex items-center space-x-3 p-2">
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <span className="text-sm">Store Performance Metrics</span>
+                  <span className="text-sm">
+                    {userRole === 'district_manager' ? 'Regional Performance' : 'Network Performance'}
+                  </span>
                 </div>
               </div>
             </Card>
@@ -336,6 +493,90 @@ export default function AutomatedReports({ userRole }: AutomatedReportsProps) {
         </TabsContent>
 
         <TabsContent value="trends" className="space-y-6">
+          {/* Sales Performance Trends Chart */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold text-salon-purple mb-4">
+                {userRole === 'district_manager' ? 'Regional Sales Trends' : 'Network Sales Trends'}
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={[
+                  { month: 'Jan', sales: 89456, goal: 85000 },
+                  { month: 'Feb', sales: 92133, goal: 90000 },
+                  { month: 'Mar', sales: 88901, goal: 90000 },
+                  { month: 'Apr', sales: 95432, goal: 95000 },
+                  { month: 'May', sales: 98105, goal: 95000 },
+                  { month: 'Jun', sales: 102567, goal: 100000 }
+                ]}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip formatter={(value) => formatCurrency(value)} />
+                  <Line type="monotone" dataKey="sales" stroke="#8B5CF6" strokeWidth={3} />
+                  <Line type="monotone" dataKey="goal" stroke="#EC4899" strokeWidth={2} strokeDasharray="5 5" />
+                </LineChart>
+              </ResponsiveContainer>
+            </Card>
+
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold text-salon-purple mb-4">Activity Completion Rates</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={[
+                  { activity: 'Daily Ops', completion: 94 },
+                  { activity: 'Inventory', completion: 87 },
+                  { activity: 'Staff Sched', completion: 92 },
+                  { activity: 'Standards', completion: 89 },
+                  { activity: 'Customer', completion: 96 }
+                ]}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="activity" />
+                  <YAxis />
+                  <Tooltip formatter={(value) => `${value}%`} />
+                  <Bar dataKey="completion" fill="#8B5CF6" />
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
+          </div>
+
+          {/* Performance Insights */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="p-6">
+              <h4 className="font-medium text-salon-purple mb-3">Top Performing Store</h4>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm">Store #001 - Beverly Hills</span>
+                  <Badge className="bg-green-100 text-green-800">98% Score</Badge>
+                </div>
+                <p className="text-xs text-gray-600">Consistent high performance across all metrics</p>
+              </div>
+            </Card>
+
+            <Card className="p-6">
+              <h4 className="font-medium text-salon-purple mb-3">Improvement Opportunity</h4>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm">Inventory Management</span>
+                  <Badge variant="outline">87% Avg</Badge>
+                </div>
+                <p className="text-xs text-gray-600">Focus area for upcoming quarter</p>
+              </div>
+            </Card>
+
+            <Card className="p-6">
+              <h4 className="font-medium text-salon-purple mb-3">Growth Trend</h4>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm">Month over Month</span>
+                  <div className="flex items-center">
+                    <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
+                    <span className="text-green-600 font-medium">+12%</span>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-600">Positive trajectory maintained</p>
+              </div>
+            </Card>
+          </div>
+
           <Card className="p-6">
             <h3 className="text-lg font-semibold text-salon-purple mb-4">Analytics Capabilities</h3>
             <div className="space-y-4">
