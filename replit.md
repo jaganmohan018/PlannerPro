@@ -135,4 +135,4 @@ This is a full-stack web application built for SalonCentric store managers to tr
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
-Web page frame color: Lavender background for better visual appeal.
+Web page frame color: Dark lavender background for sophisticated visual appeal.

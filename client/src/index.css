@@ -29,7 +29,7 @@
   --salon-light-purple: hsl(278, 45%, 55%);
   --salon-pink: hsl(336, 84%, 55%);
   --salon-orange: hsl(36, 100%, 50%);
-  --salon-bg: hsl(253, 50%, 90%);
+  --salon-bg: hsl(253, 40%, 25%);
 }
 
 .dark {
