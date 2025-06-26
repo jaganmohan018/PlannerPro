@@ -3,6 +3,20 @@ import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Users table for authentication
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+  email: text("email").notNull().unique(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  role: text("role").notNull(), // 'store_associate', 'district_manager', 'business_executive'
+  storeId: integer("store_id").references(() => stores.id), // For store associates
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const stores = pgTable("stores", {
   id: serial("id").primaryKey(),
   storeNumber: text("store_number").notNull().unique(),
@@ -73,9 +87,17 @@ export const storeAnalytics = pgTable("store_analytics", {
 });
 
 // Relations
+export const usersRelations = relations(users, ({ one }) => ({
+  store: one(stores, {
+    fields: [users.storeId],
+    references: [stores.id],
+  }),
+}));
+
 export const storesRelations = relations(stores, ({ many }) => ({
   plannerEntries: many(plannerEntries),
   analytics: many(storeAnalytics),
+  users: many(users),
 }));
 
 export const plannerEntriesRelations = relations(plannerEntries, ({ one, many }) => ({
@@ -101,6 +123,12 @@ export const storeAnalyticsRelations = relations(storeAnalytics, ({ one }) => ({
 }));
 
 // Insert schemas
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertStoreSchema = createInsertSchema(stores).omit({
   id: true,
   createdAt: true,
@@ -122,6 +150,8 @@ export const insertStoreAnalyticsSchema = createInsertSchema(storeAnalytics).omi
 });
 
 // Types
+export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
 export type Store = typeof stores.$inferSelect;
 export type InsertStore = z.infer<typeof insertStoreSchema>;
 export type PlannerEntry = typeof plannerEntries.$inferSelect;
