@@ -10,6 +10,7 @@ import PlannerPage from "@/pages/planner";
 import Dashboard from "@/pages/dashboard";
 import AdminPage from "@/pages/admin";
 import Landing from "@/pages/landing";
+import LoginPage from "@/pages/login";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -26,8 +27,8 @@ function Router() {
   if (!isAuthenticated) {
     return (
       <Switch>
-        <Route path="/" component={Landing} />
-        <Route component={Landing} />
+        <Route path="/" component={LoginPage} />
+        <Route component={LoginPage} />
       </Switch>
     );
   }
