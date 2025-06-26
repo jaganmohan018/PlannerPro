@@ -59,8 +59,95 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  // User operations (mandatory for Replit Auth)
+  async getUser(id: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(userData)
+      .onConflictDoUpdate({
+        target: users.id,
+        set: {
+          ...userData,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return user;
+  }
+
+  // Role-based user management
+  async getUsersByRole(role: string): Promise<User[]> {
+    return await db.select().from(users).where(eq(users.role, role));
+  }
+
+  async updateUserRole(userId: string, role: string, storeId?: number): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ role, storeId, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  async getStoreAssignments(userId: string): Promise<UserStoreAssignment[]> {
+    return await db
+      .select()
+      .from(userStoreAssignments)
+      .where(eq(userStoreAssignments.userId, userId));
+  }
+
+  async addStoreAssignment(assignment: InsertUserStoreAssignment): Promise<UserStoreAssignment> {
+    const [result] = await db
+      .insert(userStoreAssignments)
+      .values(assignment)
+      .returning();
+    return result;
+  }
+
+  async removeStoreAssignment(userId: string, storeId: number): Promise<void> {
+    await db
+      .delete(userStoreAssignments)
+      .where(
+        and(
+          eq(userStoreAssignments.userId, userId),
+          eq(userStoreAssignments.storeId, storeId)
+        )
+      );
+  }
+
+  // Store operations with access control
   async getStores(): Promise<Store[]> {
     return await db.select().from(stores).where(eq(stores.isActive, true)).orderBy(stores.storeNumber);
+  }
+
+  async getStoresForUser(userId: string, userRole: string): Promise<Store[]> {
+    if (userRole === "admin") {
+      return this.getStores();
+    }
+    
+    if (userRole === "store_associate") {
+      const user = await this.getUser(userId);
+      if (user?.storeId) {
+        const store = await this.getStore(user.storeId);
+        return store ? [store] : [];
+      }
+      return [];
+    }
+    
+    if (userRole === "district_manager") {
+      const assignments = await this.getStoreAssignments(userId);
+      if (assignments.length === 0) return [];
+      
+      const storeIds = assignments.map(a => a.storeId);
+      return await db.select().from(stores).where(inArray(stores.id, storeIds));
+    }
+    
+    return [];
   }
 
   async getStore(id: number): Promise<Store | undefined> {
@@ -86,6 +173,19 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(plannerEntries)
       .where(eq(plannerEntries.storeId, storeId))
+      .orderBy(desc(plannerEntries.date))
+      .limit(limit);
+  }
+
+  async getPlannerEntriesForUser(userId: string, userRole: string, limit = 30): Promise<PlannerEntry[]> {
+    const userStores = await this.getStoresForUser(userId, userRole);
+    if (userStores.length === 0) return [];
+    
+    const storeIds = userStores.map(store => store.id);
+    return await db
+      .select()
+      .from(plannerEntries)
+      .where(inArray(plannerEntries.storeId, storeIds))
       .orderBy(desc(plannerEntries.date))
       .limit(limit);
   }
@@ -134,6 +234,16 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(storeAnalytics)
       .where(eq(storeAnalytics.storeId, storeId))
+      .orderBy(desc(storeAnalytics.month));
+  }
+
+  async getMultiStoreAnalytics(storeIds: number[]): Promise<StoreAnalytics[]> {
+    if (storeIds.length === 0) return [];
+    
+    return await db
+      .select()
+      .from(storeAnalytics)
+      .where(inArray(storeAnalytics.storeId, storeIds))
       .orderBy(desc(storeAnalytics.month));
   }
 

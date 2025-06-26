@@ -1,13 +1,66 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertStoreSchema, insertPlannerEntrySchema, insertStaffScheduleSchema } from "@shared/schema";
+import { setupAuth, isAuthenticated, requireRole, requireStoreAccess } from "./replitAuth";
+import { insertStoreSchema, insertPlannerEntrySchema, insertStaffScheduleSchema, insertUserSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Store routes
-  app.get("/api/stores", async (req, res) => {
+  // Auth middleware
+  await setupAuth(app);
+
+  // Auth routes
+  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const stores = await storage.getStores();
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  // Admin routes - User management
+  app.get("/api/admin/users", isAuthenticated, requireRole(['admin']), async (req, res) => {
+    try {
+      const { role } = req.query;
+      const users = role ? await storage.getUsersByRole(role as string) : await storage.getUsersByRole('store_associate');
+      res.json(users);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  app.put("/api/admin/users/:userId/role", isAuthenticated, requireRole(['admin']), async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const { role, storeId } = req.body;
+      const user = await storage.updateUserRole(userId, role, storeId);
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update user role" });
+    }
+  });
+
+  app.post("/api/admin/store-assignments", isAuthenticated, requireRole(['admin']), async (req, res) => {
+    try {
+      const assignment = await storage.addStoreAssignment(req.body);
+      res.json(assignment);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to create store assignment" });
+    }
+  });
+
+  // Store routes with role-based access
+  app.get("/api/stores", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const dbUser = await storage.getUser(userId);
+      if (!dbUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      const stores = await storage.getStoresForUser(userId, dbUser.role);
       res.json(stores);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch stores" });
