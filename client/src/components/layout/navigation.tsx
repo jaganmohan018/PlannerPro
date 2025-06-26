@@ -80,7 +80,7 @@ export default function Navigation() {
                 <SelectValue placeholder="Select Store" />
               </SelectTrigger>
               <SelectContent>
-                {stores.map((store: any) => (
+                {Array.isArray(stores) && stores.map((store: any) => (
                   <SelectItem key={store.id} value={store.id.toString()}>
                     Store #{store.storeNumber} - {store.name}
                   </SelectItem>

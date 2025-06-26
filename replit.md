@@ -109,7 +109,27 @@ This is a full-stack web application built for SalonCentric store managers to tr
 ## Changelog
 
 - June 25, 2025. Initial setup
+- June 26, 2025. Implemented role-based authentication system with three user types: Store Associates, District Managers, and Business Executives. Analytics dashboard restricted to management roles only.
+
+## Authentication System
+
+### User Roles
+1. **Store Associates**: Access to daily planner, staff scheduling, and store operations
+2. **District Managers**: All Store Associate access plus analytics dashboard for performance monitoring
+3. **Business Executives**: Full system access including analytics for all 670+ stores
+
+### Test Accounts
+- Store Associate: username `store_associate`, password `password123`
+- District Manager: username `district_manager`, password `password123`  
+- Business Executive: username `business_executive`, password `password123`
+
+### Security Features
+- Password hashing with salt using Node.js crypto
+- Session management with PostgreSQL storage
+- Role-based route protection
+- Automatic redirect to login for unauthenticated users
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Web page frame color: Lavender background for better visual appeal.
