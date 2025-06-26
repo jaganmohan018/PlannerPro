@@ -60,6 +60,9 @@ export const plannerEntries = pgTable("planner_entries", {
   educationToSold: text("education_to_sold"),
   socialPosts: text("social_posts"),
   
+  // Photo uploads (stored as JSON array of photo objects)
+  photos: jsonb("photos"), // [{"id": "uuid", "filename": "photo.jpg", "uploadedAt": "timestamp", "category": "store_condition"}]
+  
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

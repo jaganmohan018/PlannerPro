@@ -10,6 +10,7 @@ import SalesTracking from "@/components/planner/sales-tracking";
 import StaffScheduling from "@/components/planner/staff-scheduling";
 import ActivitySection from "@/components/planner/activity-section";
 import TodaysPlan from "@/components/planner/todays-plan";
+import PhotoUpload from "@/components/planner/photo-upload";
 
 export default function PlannerPage() {
   const { user } = useAuth();
@@ -220,6 +221,15 @@ export default function PlannerPage() {
             selectedDate={selectedDate}
           />
         </Card>
+      </div>
+
+      {/* Photo Upload Section - Only for Store Associates */}
+      <div className="mt-6">
+        <PhotoUpload
+          plannerEntryId={plannerData?.id || 0}
+          photos={plannerData?.photos || []}
+          onUpdate={handleUpdatePlanner}
+        />
       </div>
     </div>
   );
