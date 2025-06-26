@@ -1,11 +1,15 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { setupAuth, requireAuth, requireRole } from "./auth";
 import { insertStoreSchema, insertPlannerEntrySchema, insertStaffScheduleSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Store routes
-  app.get("/api/stores", async (req, res) => {
+  // Setup authentication
+  setupAuth(app);
+
+  // Store routes - accessible to all authenticated users
+  app.get("/api/stores", requireAuth, async (req, res) => {
     try {
       const stores = await storage.getStores();
       res.json(stores);
@@ -149,8 +153,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Analytics routes
-  app.get("/api/analytics/:storeId", async (req, res) => {
+  // Analytics routes - only accessible to district managers and business executives
+  app.get("/api/analytics/:storeId", requireRole('district_manager', 'business_executive'), async (req, res) => {
     try {
       const storeId = parseInt(req.params.storeId);
       const analytics = await storage.getStoreAnalytics(storeId);
