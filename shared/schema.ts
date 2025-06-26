@@ -27,6 +27,8 @@ export const users = pgTable("users", {
   storeId: integer("store_id"), // null for district_managers and admins
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+  profileImageUrl: varchar("profile_image_url"),
+  replitId: varchar("replit_id").unique(),
 });
 
 // User-Store assignments for district managers (many-to-many)

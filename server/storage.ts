@@ -25,7 +25,7 @@ export interface IStorage {
   // User operations
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  createUser(user: UpsertUser): Promise<User>;
   upsertUser(user: UpsertUser): Promise<User>;
   
   // Role-based user management
@@ -72,18 +72,23 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async createUser(userData: InsertUser): Promise<User> {
+  async createUser(userData: UpsertUser): Promise<User> {
     const [user] = await db.insert(users).values(userData).returning();
     return user;
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
-    const [user] = await db.insert(users).values(userData).onConflictDoUpdate({
+    const [user] = await db.insert(users).values({
+      ...userData,
+      updatedAt: new Date()
+    }).onConflictDoUpdate({
       target: users.id,
       set: {
         email: userData.email,
         firstName: userData.firstName,
         lastName: userData.lastName,
+        profileImageUrl: userData.profileImageUrl,
+        replitId: userData.replitId,
         updatedAt: new Date()
       }
     }).returning();
