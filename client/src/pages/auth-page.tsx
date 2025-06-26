@@ -32,11 +32,6 @@ export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
 
-  // Redirect if already logged in
-  if (user) {
-    return <Redirect to="/" />;
-  }
-
   const { data: stores } = useQuery({
     queryKey: ["/api/stores"],
     enabled: false, // Don't auto-fetch since we're not authenticated
@@ -72,6 +67,11 @@ export default function AuthPage() {
     const { confirmPassword, ...registerData } = data;
     registerMutation.mutate(registerData);
   };
+
+  // Redirect if already logged in - moved after all hooks
+  if (user) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <div className="min-h-screen bg-salon-bg flex items-center justify-center p-4">
