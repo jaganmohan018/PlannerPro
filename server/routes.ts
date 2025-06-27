@@ -167,15 +167,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/planner-history/:storeId", requireAuth, async (req, res) => {
+  // Historical planner entries route (past 7 days for store associates)
+  app.get("/api/planner/:storeId/history", requireAuth, async (req, res) => {
     try {
       const storeId = parseInt(req.params.storeId);
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : 30;
       
-      const entries = await storage.getPlannerEntriesForStore(storeId, limit);
+      // Get past 7 days of entries
+      const entries = await storage.getPlannerEntriesForStore(storeId, 7);
       res.json(entries);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch planner history" });
+    }
+  });
+
+  // Save planner entry (mark as saved/completed)
+  app.post("/api/planner/:id/save", requireAuth, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      // Update the entry with a saved status or timestamp
+      const entry = await storage.updatePlannerEntry(id, { 
+        lastSaved: new Date().toISOString(),
+        isSaved: true 
+      });
+      res.json(entry);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to save planner entry" });
     }
   });
 

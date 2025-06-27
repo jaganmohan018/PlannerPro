@@ -4,8 +4,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { Redirect } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { getCurrentDate, formatDate } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { CalendarDays, Save, History } from "lucide-react";
 import SalesTracking from "@/components/planner/sales-tracking";
 import StaffScheduling from "@/components/planner/staff-scheduling";
 import ActivitySection from "@/components/planner/activity-section";
@@ -16,7 +20,9 @@ export default function PlannerPage() {
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(getCurrentDate());
   const [selectedStore] = useState(1); // TODO: Get from context/navigation
+  const [showHistory, setShowHistory] = useState(false);
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   // Redirect non-store associates to dashboard
   if (user && user.role !== 'store_associate') {
@@ -27,6 +33,12 @@ export default function PlannerPage() {
     queryKey: [`/api/planner/${selectedStore}/${selectedDate}`],
   });
 
+  // Query for historical planner entries (past 7 days)
+  const { data: historicalData } = useQuery({
+    queryKey: [`/api/planner/${selectedStore}/history`],
+    enabled: showHistory,
+  });
+
   const updatePlannerMutation = useMutation({
     mutationFn: async (data: any) => {
       if (!plannerData?.id) return;
@@ -35,6 +47,43 @@ export default function PlannerPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [`/api/planner/${selectedStore}/${selectedDate}`],
+      });
+      toast({
+        title: "Data saved successfully",
+        description: "Your planner data has been saved.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Save failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const savePlannerMutation = useMutation({
+    mutationFn: async () => {
+      if (!plannerData?.id) return;
+      return await apiRequest("POST", `/api/planner/${plannerData.id}/save`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [`/api/planner/${selectedStore}/${selectedDate}`],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [`/api/planner/${selectedStore}/history`],
+      });
+      toast({
+        title: "Data saved successfully",
+        description: "Your planner data has been saved and is now available in your history.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Save failed",
+        description: error.message,
+        variant: "destructive",
       });
     },
   });
@@ -59,7 +108,7 @@ export default function PlannerPage() {
 
   return (
     <div className="max-w-7xl mx-auto p-4 lg:p-6">
-      {/* Date and Quick Stats */}
+      {/* Date, Controls and Quick Stats */}
       <Card className="p-6 mb-6 no-print">
         <div className="flex flex-wrap justify-between items-center">
           <div className="flex items-center space-x-4">
@@ -72,6 +121,24 @@ export default function PlannerPage() {
             <span className="text-2xl font-bold text-salon-purple">
               {formatDate(selectedDate)}
             </span>
+            <div className="flex space-x-2">
+              <Button
+                onClick={() => savePlannerMutation.mutate()}
+                disabled={savePlannerMutation.isPending}
+                className="bg-salon-purple hover:bg-salon-purple/90"
+              >
+                <Save className="h-4 w-4 mr-2" />
+                {savePlannerMutation.isPending ? "Saving..." : "Save Data"}
+              </Button>
+              <Button
+                onClick={() => setShowHistory(!showHistory)}
+                variant="outline"
+                className="border-salon-purple text-salon-purple hover:bg-salon-purple hover:text-white"
+              >
+                <History className="h-4 w-4 mr-2" />
+                {showHistory ? "Hide History" : "View Past 7 Days"}
+              </Button>
+            </div>
           </div>
           <div className="flex space-x-6 mt-4 lg:mt-0">
             <div className="text-center">
@@ -231,6 +298,77 @@ export default function PlannerPage() {
           onUpdate={handleUpdatePlanner}
         />
       </div>
+
+      {/* Historical View - Past 7 Days */}
+      {showHistory && (
+        <Card className="mt-6 no-print">
+          <div className="p-6">
+            <h3 className="text-xl font-bold text-salon-purple mb-4 flex items-center">
+              <CalendarDays className="h-5 w-5 mr-2" />
+              Past 7 Days History
+            </h3>
+            {historicalData ? (
+              <div className="space-y-4">
+                {historicalData.map((entry: any, index: number) => (
+                  <Card key={index} className="p-4 border-l-4 border-salon-purple">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <div className="font-semibold text-lg">{formatDate(entry.date)}</div>
+                        <div className="text-sm text-gray-600">
+                          {entry.date === getCurrentDate() ? "Today" : 
+                           new Date(entry.date) >= new Date(getCurrentDate()) ? "Future" : 
+                           Math.ceil((new Date(getCurrentDate()).getTime() - new Date(entry.date).getTime()) / (1000 * 60 * 60 * 24)) + " days ago"}
+                        </div>
+                      </div>
+                      <div className="flex space-x-4 text-sm">
+                        <Badge variant="outline" className="bg-salon-purple/10 text-salon-purple">
+                          Sales: ${entry.dailySales || "0.00"}
+                        </Badge>
+                        <Badge variant="outline" className="bg-salon-pink/10 text-salon-pink">
+                          WTD: ${entry.wtdActual || "0.00"}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <div className="font-medium text-blue-700 mb-1">Daily Operations</div>
+                        <div className="text-gray-600">
+                          {Object.values(entry.dailyOperations || {}).filter(Boolean).length}/8 completed
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-medium text-yellow-700 mb-1">Inventory</div>
+                        <div className="text-gray-600">
+                          {Object.values(entry.inventoryManagement || {}).filter(Boolean).length}/4 completed
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-medium text-green-700 mb-1">Store Standards</div>
+                        <div className="text-gray-600">
+                          {Object.values(entry.storeStandards || {}).filter(Boolean).length}/7 completed
+                        </div>
+                      </div>
+                    </div>
+                    {entry.priorities && entry.priorities.length > 0 && (
+                      <div className="mt-3 pt-3 border-t">
+                        <div className="font-medium text-orange-700 mb-1">Today's Priorities</div>
+                        <div className="text-sm text-gray-600">
+                          {entry.priorities.filter((p: string) => p.trim()).length} priorities set
+                        </div>
+                      </div>
+                    )}
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <CalendarDays className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <p>Loading historical data...</p>
+              </div>
+            )}
+          </div>
+        </Card>
+      )}
     </div>
   );
 }
