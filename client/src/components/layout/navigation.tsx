@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
-import { Scissors, ChartLine, FileText, Printer, LogOut, User } from "lucide-react";
+import { Scissors, ChartLine, FileText, Printer, LogOut, User, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function Navigation() {
@@ -77,6 +77,22 @@ export default function Navigation() {
                   </Button>
                 </Link>
               )}
+              
+              {isSuperAdmin && (
+                <Link href="/admin">
+                  <Button
+                    variant={location === "/" || location === "/admin" ? "secondary" : "ghost"}
+                    size="sm"
+                    className={cn(
+                      "text-white hover:bg-salon-light-purple",
+                      (location === "/" || location === "/admin") && "bg-white text-salon-purple hover:bg-gray-100"
+                    )}
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    Admin Panel
+                  </Button>
+                </Link>
+              )}
             </div>
 
             {isStoreAssociate && (
@@ -97,6 +113,12 @@ export default function Navigation() {
             {isManagement && (
               <div className="text-sm text-white">
                 <span className="opacity-90">Multi-Store Analytics</span>
+              </div>
+            )}
+
+            {isSuperAdmin && (
+              <div className="text-sm text-white">
+                <span className="opacity-90">System Administration</span>
               </div>
             )}
 
