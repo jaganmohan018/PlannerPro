@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Redirect } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getCurrentDate, formatDate } from "@/lib/utils";
@@ -47,10 +48,13 @@ export default function PlannerPage() {
     enabled: !!selectedStore, // Only run query if user has assigned store
   });
 
-  // Query for historical planner entries (past 7 days)
-  const { data: historicalData } = useQuery({
-    queryKey: [`/api/planner/${selectedStore}/history`],
-    enabled: showHistory && !!selectedStore,
+  // State for selected historical date
+  const [selectedHistoryDate, setSelectedHistoryDate] = useState<string>("");
+  
+  // Query for historical planner entry for specific date
+  const { data: historicalData, isLoading: isLoadingHistory } = useQuery({
+    queryKey: [`/api/planner/${selectedStore}/${selectedHistoryDate}`],
+    enabled: showHistory && !!selectedStore && !!selectedHistoryDate,
   });
 
   const updatePlannerMutation = useMutation({
