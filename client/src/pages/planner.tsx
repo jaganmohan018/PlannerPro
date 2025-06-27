@@ -19,7 +19,6 @@ import PhotoUpload from "@/components/planner/photo-upload";
 export default function PlannerPage() {
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(getCurrentDate());
-  const [selectedStore] = useState(1); // TODO: Get from context/navigation
   const [showHistory, setShowHistory] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -29,14 +28,23 @@ export default function PlannerPage() {
     return <Redirect to="/dashboard" />;
   }
 
+  // Redirect if store associate has no assigned store
+  if (user && user.role === 'store_associate' && !user.storeId) {
+    return <Redirect to="/auth" />;
+  }
+
+  // Use the user's assigned store
+  const selectedStore = user?.storeId;
+
   const { data: plannerData, isLoading } = useQuery({
     queryKey: [`/api/planner/${selectedStore}/${selectedDate}`],
+    enabled: !!selectedStore, // Only run query if user has assigned store
   });
 
   // Query for historical planner entries (past 7 days)
   const { data: historicalData } = useQuery({
     queryKey: [`/api/planner/${selectedStore}/history`],
-    enabled: showHistory,
+    enabled: showHistory && !!selectedStore,
   });
 
   const updatePlannerMutation = useMutation({
