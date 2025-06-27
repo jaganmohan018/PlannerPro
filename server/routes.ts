@@ -69,10 +69,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Serve uploaded photos - only for store associates
   app.use('/uploads', requireAuth, requireRole('store_associate'), express.static(path.join(process.cwd(), 'uploads')));
 
-  // Store routes - accessible to all authenticated users
+  // Store routes - filtered based on user role
   app.get("/api/stores", requireAuth, async (req, res) => {
     try {
-      const stores = await storage.getStores();
+      const user = req.user;
+      let stores = await storage.getStores();
+      
+      // Store associates can only see their assigned store
+      if (user.role === 'store_associate') {
+        if (!user.storeId) {
+          return res.json([]);
+        }
+        stores = stores.filter(store => store.id === user.storeId);
+      }
+      
       res.json(stores);
     } catch (error) {
       console.error('Error fetching stores:', error);
