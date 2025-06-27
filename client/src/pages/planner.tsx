@@ -165,7 +165,7 @@ export default function PlannerPage() {
                 className="border-salon-purple text-salon-purple hover:bg-salon-purple hover:text-white"
               >
                 <History className="h-4 w-4 mr-2" />
-                {showHistory ? "Hide History" : "View Past 7 Days"}
+                {showHistory ? "Hide History" : "View Historical Data"}
               </Button>
             </div>
           </div>
