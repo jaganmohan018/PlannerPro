@@ -148,42 +148,69 @@ export default function ActivitySection({ data, onUpdate }: ActivitySectionProps
       {/* Store Standards */}
       <div className="bg-green-50 p-4 rounded-lg mb-4">
         <h5 className="font-semibold text-green-700 mb-3">Store Standards</h5>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3">
           <label className="flex items-center space-x-2">
             <Checkbox
-              checked={standards.visualMerchandising || false}
+              checked={standards.maintainVisualMerchandising || false}
               onCheckedChange={(checked) => 
-                handleCheckboxChange("storeStandards", "visualMerchandising", checked as boolean)
+                handleCheckboxChange("storeStandards", "maintainVisualMerchandising", checked as boolean)
               }
             />
-            <span className="text-sm">Visual Merchandising</span>
+            <span className="text-sm">Maintain Visual Merchandising & marketing Standards</span>
           </label>
           <label className="flex items-center space-x-2">
             <Checkbox
-              checked={standards.cleanliness || false}
+              checked={standards.replenishFrontFace || false}
               onCheckedChange={(checked) => 
-                handleCheckboxChange("storeStandards", "cleanliness", checked as boolean)
+                handleCheckboxChange("storeStandards", "replenishFrontFace", checked as boolean)
               }
             />
-            <span className="text-sm">Cleanliness Standards</span>
+            <span className="text-sm">Replenish, Fully Front Face the Store, Endcaps, Focus Fixtures & Cash Wrap</span>
           </label>
           <label className="flex items-center space-x-2">
             <Checkbox
-              checked={standards.productOrganization || false}
+              checked={standards.cleanCountersDemo || false}
               onCheckedChange={(checked) => 
-                handleCheckboxChange("storeStandards", "productOrganization", checked as boolean)
+                handleCheckboxChange("storeStandards", "cleanCountersDemo", checked as boolean)
               }
             />
-            <span className="text-sm">Product Organization</span>
+            <span className="text-sm">Clean Counters, Demo Area, Testers & All Displays</span>
           </label>
           <label className="flex items-center space-x-2">
             <Checkbox
-              checked={standards.signageUpdates || false}
+              checked={standards.cleanWindowsDoors || false}
               onCheckedChange={(checked) => 
-                handleCheckboxChange("storeStandards", "signageUpdates", checked as boolean)
+                handleCheckboxChange("storeStandards", "cleanWindowsDoors", checked as boolean)
               }
             />
-            <span className="text-sm">Signage Updates</span>
+            <span className="text-sm">Clean Windows & Doors</span>
+          </label>
+          <label className="flex items-center space-x-2">
+            <Checkbox
+              checked={standards.cleanFloors || false}
+              onCheckedChange={(checked) => 
+                handleCheckboxChange("storeStandards", "cleanFloors", checked as boolean)
+              }
+            />
+            <span className="text-sm">Clean Floors</span>
+          </label>
+          <label className="flex items-center space-x-2">
+            <Checkbox
+              checked={standards.cleanReplenishBathrooms || false}
+              onCheckedChange={(checked) => 
+                handleCheckboxChange("storeStandards", "cleanReplenishBathrooms", checked as boolean)
+              }
+            />
+            <span className="text-sm">Clean & Replenish Bathrooms</span>
+          </label>
+          <label className="flex items-center space-x-2">
+            <Checkbox
+              checked={standards.emptyTrashBins || false}
+              onCheckedChange={(checked) => 
+                handleCheckboxChange("storeStandards", "emptyTrashBins", checked as boolean)
+              }
+            />
+            <span className="text-sm">Empty All Trash Bins & Take Out for the Day</span>
           </label>
         </div>
       </div>

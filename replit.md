@@ -116,6 +116,7 @@ This is a full-stack web application built for SalonCentric store managers to tr
 - June 27, 2025. Fixed Super Admin authentication system with proper password hashing and memory-based session storage. Resolved critical database schema issues by adding missing district_manager_id column to stores table. All store management APIs now fully operational including store creation, listing, and assignment functionality.
 - June 27, 2025. Updated Daily Operations section to show only the specific 8 items required: Review Huddle Calendar/Email/Teams, Review Labor Dashboards & UKG Punches, Pull & Process Omni Orders, Set up Event/Education/Demo preparation, Reconcile Daily Paperwork/Check Reports, Check End of day Notes, Check Education Dashboard, and Strategize & Print call Lists.
 - June 27, 2025. Updated Inventory section to show only the specific 4 items required: Review the Store Receiving Report, Review the Cycle Counts Report, Review the Negative on Hands Report, and Review the Damage Log & Update Accordingly.
+- June 27, 2025. Updated Store Standards section to show only the specific 7 items required: Maintain Visual Merchandising & marketing Standards, Replenish/Fully Front Face the Store/Endcaps/Focus Fixtures & Cash Wrap, Clean Counters/Demo Area/Testers & All Displays, Clean Windows & Doors, Clean Floors, Clean & Replenish Bathrooms, and Empty All Trash Bins & Take Out for the Day.
 
 ## Authentication System
 

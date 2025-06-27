@@ -221,12 +221,88 @@ export default function TodaysPlan({ data, onUpdate, selectedDate }: TodaysPlanP
             <div className="text-xs font-semibold mb-2">Store Standards</div>
             <div className="grid grid-cols-1 gap-1 text-xs">
               <label className="flex items-center space-x-1">
-                <Checkbox />
-                <span>Clean & Beautiful Bathrooms</span>
+                <Checkbox
+                  checked={data?.storeStandards?.maintainVisualMerchandising || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.storeStandards || {};
+                    onUpdate({ 
+                      storeStandards: { ...currentSection, maintainVisualMerchandising: checked }
+                    });
+                  }}
+                />
+                <span>Maintain Visual Merchandising & marketing Standards</span>
               </label>
               <label className="flex items-center space-x-1">
-                <Checkbox />
-                <span>Empty All Trash, Take It Out For the Day</span>
+                <Checkbox
+                  checked={data?.storeStandards?.replenishFrontFace || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.storeStandards || {};
+                    onUpdate({ 
+                      storeStandards: { ...currentSection, replenishFrontFace: checked }
+                    });
+                  }}
+                />
+                <span>Replenish, Fully Front Face the Store, Endcaps, Focus Fixtures & Cash Wrap</span>
+              </label>
+              <label className="flex items-center space-x-1">
+                <Checkbox
+                  checked={data?.storeStandards?.cleanCountersDemo || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.storeStandards || {};
+                    onUpdate({ 
+                      storeStandards: { ...currentSection, cleanCountersDemo: checked }
+                    });
+                  }}
+                />
+                <span>Clean Counters, Demo Area, Testers & All Displays</span>
+              </label>
+              <label className="flex items-center space-x-1">
+                <Checkbox
+                  checked={data?.storeStandards?.cleanWindowsDoors || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.storeStandards || {};
+                    onUpdate({ 
+                      storeStandards: { ...currentSection, cleanWindowsDoors: checked }
+                    });
+                  }}
+                />
+                <span>Clean Windows & Doors</span>
+              </label>
+              <label className="flex items-center space-x-1">
+                <Checkbox
+                  checked={data?.storeStandards?.cleanFloors || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.storeStandards || {};
+                    onUpdate({ 
+                      storeStandards: { ...currentSection, cleanFloors: checked }
+                    });
+                  }}
+                />
+                <span>Clean Floors</span>
+              </label>
+              <label className="flex items-center space-x-1">
+                <Checkbox
+                  checked={data?.storeStandards?.cleanReplenishBathrooms || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.storeStandards || {};
+                    onUpdate({ 
+                      storeStandards: { ...currentSection, cleanReplenishBathrooms: checked }
+                    });
+                  }}
+                />
+                <span>Clean & Replenish Bathrooms</span>
+              </label>
+              <label className="flex items-center space-x-1">
+                <Checkbox
+                  checked={data?.storeStandards?.emptyTrashBins || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.storeStandards || {};
+                    onUpdate({ 
+                      storeStandards: { ...currentSection, emptyTrashBins: checked }
+                    });
+                  }}
+                />
+                <span>Empty All Trash Bins & Take Out for the Day</span>
               </label>
             </div>
           </div>
