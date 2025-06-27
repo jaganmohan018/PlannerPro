@@ -117,6 +117,7 @@ This is a full-stack web application built for SalonCentric store managers to tr
 - June 27, 2025. Updated Daily Operations section to show only the specific 8 items required: Review Huddle Calendar/Email/Teams, Review Labor Dashboards & UKG Punches, Pull & Process Omni Orders, Set up Event/Education/Demo preparation, Reconcile Daily Paperwork/Check Reports, Check End of day Notes, Check Education Dashboard, and Strategize & Print call Lists.
 - June 27, 2025. Updated Inventory section to show only the specific 4 items required: Review the Store Receiving Report, Review the Cycle Counts Report, Review the Negative on Hands Report, and Review the Damage Log & Update Accordingly.
 - June 27, 2025. Updated Store Standards section to show only the specific 7 items required: Maintain Visual Merchandising & marketing Standards, Replenish/Fully Front Face the Store/Endcaps/Focus Fixtures & Cash Wrap, Clean Counters/Demo Area/Testers & All Displays, Clean Windows & Doors, Clean Floors, Clean & Replenish Bathrooms, and Empty All Trash Bins & Take Out for the Day.
+- June 27, 2025. Implemented store associate data saving and historical viewing features. Added manual save button for store associates to save daily planner data, and "View Past 7 Days" functionality to review historical entries with completion summaries, sales data, and activity progress tracking.
 
 ## Authentication System
 

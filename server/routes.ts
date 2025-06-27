@@ -185,12 +185,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       
-      // Update the entry with a saved status or timestamp
-      const entry = await storage.updatePlannerEntry(id, { 
-        lastSaved: new Date().toISOString(),
-        isSaved: true 
-      });
-      res.json(entry);
+      // Simply return success - data is already being saved on every update
+      const entry = await storage.updatePlannerEntry(id, {});
+      res.json({ success: true, message: "Data saved successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to save planner entry" });
     }

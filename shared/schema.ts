@@ -64,10 +64,6 @@ export const plannerEntries = pgTable("planner_entries", {
   // Photo uploads (stored as JSON array of photo objects)
   photos: jsonb("photos"), // [{"id": "uuid", "filename": "photo.jpg", "uploadedAt": "timestamp", "category": "store_condition"}]
   
-  // Save status for store associates
-  isSaved: boolean("is_saved").default(false),
-  lastSaved: timestamp("last_saved"),
-  
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
