@@ -66,31 +66,99 @@ export default function TodaysPlan({ data, onUpdate, selectedDate }: TodaysPlanP
             <div className="grid grid-cols-1 gap-1 text-xs">
               <label className="flex items-center space-x-1">
                 <Checkbox
-                  checked={data?.dailyOperations?.storeOpening || false}
+                  checked={data?.dailyOperations?.reviewHuddleCalendar || false}
                   onCheckedChange={(checked) => {
                     const currentSection = data?.dailyOperations || {};
                     onUpdate({ 
-                      dailyOperations: { ...currentSection, storeOpening: checked }
+                      dailyOperations: { ...currentSection, reviewHuddleCalendar: checked }
                     });
                   }}
                 />
-                <span>Today's Tracker Completed via Technology</span>
+                <span>Review Huddle Calendar, Email & Teams</span>
               </label>
               <label className="flex items-center space-x-1">
-                <Checkbox />
-                <span>Store Leadership & Staff Accountabilities</span>
+                <Checkbox
+                  checked={data?.dailyOperations?.reviewLaborDashboards || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.dailyOperations || {};
+                    onUpdate({ 
+                      dailyOperations: { ...currentSection, reviewLaborDashboards: checked }
+                    });
+                  }}
+                />
+                <span>Review Labor Dashboards & UKG Punches</span>
               </label>
               <label className="flex items-center space-x-1">
-                <Checkbox />
-                <span>Guest Experience Reviews</span>
+                <Checkbox
+                  checked={data?.dailyOperations?.pullProcessOmniOrders || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.dailyOperations || {};
+                    onUpdate({ 
+                      dailyOperations: { ...currentSection, pullProcessOmniOrders: checked }
+                    });
+                  }}
+                />
+                <span>Pull & Process Omni Orders</span>
               </label>
               <label className="flex items-center space-x-1">
-                <Checkbox />
-                <span>Services Daily Reporting</span>
+                <Checkbox
+                  checked={data?.dailyOperations?.setupEventEducationDemo || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.dailyOperations || {};
+                    onUpdate({ 
+                      dailyOperations: { ...currentSection, setupEventEducationDemo: checked }
+                    });
+                  }}
+                />
+                <span>Set up and prepare for any Event / Education Class / Demo</span>
               </label>
               <label className="flex items-center space-x-1">
-                <Checkbox />
-                <span>Salon Education Dashboard &amp; Upcoming Sessions</span>
+                <Checkbox
+                  checked={data?.dailyOperations?.reconcileDailyPaperwork || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.dailyOperations || {};
+                    onUpdate({ 
+                      dailyOperations: { ...currentSection, reconcileDailyPaperwork: checked }
+                    });
+                  }}
+                />
+                <span>Reconcile Daily Paperwork, Check Discount & Return Reports</span>
+              </label>
+              <label className="flex items-center space-x-1">
+                <Checkbox
+                  checked={data?.dailyOperations?.checkEndOfDayNotes || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.dailyOperations || {};
+                    onUpdate({ 
+                      dailyOperations: { ...currentSection, checkEndOfDayNotes: checked }
+                    });
+                  }}
+                />
+                <span>Check End of day Notes from Yesterday</span>
+              </label>
+              <label className="flex items-center space-x-1">
+                <Checkbox
+                  checked={data?.dailyOperations?.checkEducationDashboard || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.dailyOperations || {};
+                    onUpdate({ 
+                      dailyOperations: { ...currentSection, checkEducationDashboard: checked }
+                    });
+                  }}
+                />
+                <span>Check Education Dashboard for Upcoming Classes</span>
+              </label>
+              <label className="flex items-center space-x-1">
+                <Checkbox
+                  checked={data?.dailyOperations?.strategizePrintCallLists || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.dailyOperations || {};
+                    onUpdate({ 
+                      dailyOperations: { ...currentSection, strategizePrintCallLists: checked }
+                    });
+                  }}
+                />
+                <span>Strategize & Print call Lists for Upcoming Sales</span>
               </label>
             </div>
           </div>

@@ -26,60 +26,78 @@ export default function ActivitySection({ data, onUpdate }: ActivitySectionProps
       {/* Daily Operations */}
       <div className="bg-gray-50 p-4 rounded-lg mb-4">
         <h5 className="font-semibold text-salon-purple mb-3">Daily Operations</h5>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3">
           <label className="flex items-center space-x-2">
             <Checkbox
-              checked={dailyOps.storeOpening || false}
+              checked={dailyOps.reviewHuddleCalendar || false}
               onCheckedChange={(checked) => 
-                handleCheckboxChange("dailyOperations", "storeOpening", checked as boolean)
+                handleCheckboxChange("dailyOperations", "reviewHuddleCalendar", checked as boolean)
               }
             />
-            <span className="text-sm">Store Opening Checklist</span>
+            <span className="text-sm">Review Huddle Calendar, Email & Teams</span>
           </label>
           <label className="flex items-center space-x-2">
             <Checkbox
-              checked={dailyOps.tillCount || false}
+              checked={dailyOps.reviewLaborDashboards || false}
               onCheckedChange={(checked) => 
-                handleCheckboxChange("dailyOperations", "tillCount", checked as boolean)
+                handleCheckboxChange("dailyOperations", "reviewLaborDashboards", checked as boolean)
               }
             />
-            <span className="text-sm">Till Count & Reconciliation</span>
+            <span className="text-sm">Review Labor Dashboards & UKG Punches</span>
           </label>
           <label className="flex items-center space-x-2">
             <Checkbox
-              checked={dailyOps.staffMeeting || false}
+              checked={dailyOps.pullProcessOmniOrders || false}
               onCheckedChange={(checked) => 
-                handleCheckboxChange("dailyOperations", "staffMeeting", checked as boolean)
+                handleCheckboxChange("dailyOperations", "pullProcessOmniOrders", checked as boolean)
               }
             />
-            <span className="text-sm">Staff Meeting/Huddle</span>
+            <span className="text-sm">Pull & Process Omni Orders</span>
           </label>
           <label className="flex items-center space-x-2">
             <Checkbox
-              checked={dailyOps.customerService || false}
+              checked={dailyOps.setupEventEducationDemo || false}
               onCheckedChange={(checked) => 
-                handleCheckboxChange("dailyOperations", "customerService", checked as boolean)
+                handleCheckboxChange("dailyOperations", "setupEventEducationDemo", checked as boolean)
               }
             />
-            <span className="text-sm">Customer Service Review</span>
+            <span className="text-sm">Set up and prepare for any Event / Education Class / Demo</span>
           </label>
           <label className="flex items-center space-x-2">
             <Checkbox
-              checked={dailyOps.displayMaintenance || false}
+              checked={dailyOps.reconcileDailyPaperwork || false}
               onCheckedChange={(checked) => 
-                handleCheckboxChange("dailyOperations", "displayMaintenance", checked as boolean)
+                handleCheckboxChange("dailyOperations", "reconcileDailyPaperwork", checked as boolean)
               }
             />
-            <span className="text-sm">Display Maintenance</span>
+            <span className="text-sm">Reconcile Daily Paperwork, Check Discount & Return Reports</span>
           </label>
           <label className="flex items-center space-x-2">
             <Checkbox
-              checked={dailyOps.safetyCheck || false}
+              checked={dailyOps.checkEndOfDayNotes || false}
               onCheckedChange={(checked) => 
-                handleCheckboxChange("dailyOperations", "safetyCheck", checked as boolean)
+                handleCheckboxChange("dailyOperations", "checkEndOfDayNotes", checked as boolean)
               }
             />
-            <span className="text-sm">Safety Check</span>
+            <span className="text-sm">Check End of day Notes from Yesterday</span>
+          </label>
+          <label className="flex items-center space-x-2">
+            <Checkbox
+              checked={dailyOps.checkEducationDashboard || false}
+              onCheckedChange={(checked) => 
+                handleCheckboxChange("dailyOperations", "checkEducationDashboard", checked as boolean)
+              }
+            />
+            <span className="text-sm">Check Education Dashboard for Upcoming Classes</span>
+          </label>
+          <label className="flex items-center space-x-2">
+            <Checkbox
+              checked={dailyOps.strategizePrintCallLists || false}
+              onCheckedChange={(checked) => 
+                handleCheckboxChange("dailyOperations", "strategizePrintCallLists", checked as boolean)
+              }
+            />
+            <span className="text-sm">Strategize & Print call Lists for Upcoming Sales</span>
           </label>
         </div>
       </div>

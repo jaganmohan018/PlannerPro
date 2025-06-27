@@ -114,6 +114,7 @@ This is a full-stack web application built for SalonCentric store managers to tr
 - June 26, 2025. Created automated reporting system that aggregates data across all stores and activity areas for management roles with real-time analytics and exportable reports.
 - June 26, 2025. Enhanced analytics dashboard with comprehensive live charts, performance metrics, and role-based data differentiation. District managers see regional analytics (2 stores), business executives see network-wide analytics (5 stores). Added real-time sales tracking, activity completion charts, and store performance comparisons.
 - June 27, 2025. Fixed Super Admin authentication system with proper password hashing and memory-based session storage. Resolved critical database schema issues by adding missing district_manager_id column to stores table. All store management APIs now fully operational including store creation, listing, and assignment functionality.
+- June 27, 2025. Updated Daily Operations section to show only the specific 8 items required: Review Huddle Calendar/Email/Teams, Review Labor Dashboards & UKG Punches, Pull & Process Omni Orders, Set up Event/Education/Demo preparation, Reconcile Daily Paperwork/Check Reports, Check End of day Notes, Check Education Dashboard, and Strategize & Print call Lists.
 
 ## Authentication System
 
