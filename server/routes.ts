@@ -106,6 +106,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const storeId = parseInt(req.params.storeId);
       const date = req.params.date;
       
+      console.log(`Fetching planner entry for store ${storeId}, date ${date}`);
       let entry = await storage.getPlannerEntry(storeId, date);
       
       // If no entry exists for this date, create a default one
@@ -156,7 +157,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({ ...entry, staffSchedules });
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch planner entry" });
+      console.error('Error fetching planner entry:', error);
+      res.status(500).json({ message: "Failed to fetch planner entry", error: error.message });
     }
   });
 
@@ -181,7 +183,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const entries = await storage.getPlannerEntriesForStore(storeId, 7);
       res.json(entries);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch planner history" });
+      console.error('Error fetching planner history:', error);
+      res.status(500).json({ message: "Failed to fetch planner history", error: error.message });
     }
   });
 
