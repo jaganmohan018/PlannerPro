@@ -384,30 +384,30 @@ export default function PlannerPage() {
                       <div className="font-medium text-blue-700 mb-1">Daily Operations</div>
                       <div className="text-gray-600">
                         {Object.values(historicalData.dailyOperations || {}).filter(Boolean).length}/8 completed
-                        </div>
-                      </div>
-                      <div>
-                        <div className="font-medium text-yellow-700 mb-1">Inventory</div>
-                        <div className="text-gray-600">
-                          {Object.values(historicalData.inventoryManagement || {}).filter(Boolean).length}/4 completed
-                        </div>
-                      </div>
-                      <div>
-                        <div className="font-medium text-green-700 mb-1">Store Standards</div>
-                        <div className="text-gray-600">
-                          {Object.values(historicalData.storeStandards || {}).filter(Boolean).length}/7 completed
-                        </div>
                       </div>
                     </div>
-                    {historicalData.priorities && historicalData.priorities.length > 0 && (
-                      <div className="mt-3 pt-3 border-t">
-                        <div className="font-medium text-orange-700 mb-1">Today's Priorities</div>
-                        <div className="text-sm text-gray-600">
-                          {historicalData.priorities.filter((p: string) => p.trim()).length} priorities set
-                        </div>
+                    <div>
+                      <div className="font-medium text-yellow-700 mb-1">Inventory</div>
+                      <div className="text-gray-600">
+                        {Object.values(historicalData.inventoryManagement || {}).filter(Boolean).length}/4 completed
                       </div>
-                    )}
-                  </Card>
+                    </div>
+                    <div>
+                      <div className="font-medium text-green-700 mb-1">Store Standards</div>
+                      <div className="text-gray-600">
+                        {Object.values(historicalData.storeStandards || {}).filter(Boolean).length}/7 completed
+                      </div>
+                    </div>
+                  </div>
+                  {historicalData.priorities && historicalData.priorities.length > 0 && (
+                    <div className="mt-3 pt-3 border-t">
+                      <div className="font-medium text-orange-700 mb-1">Today's Priorities</div>
+                      <div className="text-sm text-gray-600">
+                        {historicalData.priorities.filter((p: string) => p.trim()).length} priorities set
+                      </div>
+                    </div>
+                  )}
+                </Card>
                 ) : (
                   <div className="text-center py-8 text-gray-500">
                     <CalendarDays className="h-12 w-12 mx-auto mb-3 opacity-50" />
