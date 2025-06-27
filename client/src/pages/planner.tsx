@@ -165,7 +165,7 @@ export default function PlannerPage() {
                 className="border-salon-purple text-salon-purple hover:bg-salon-purple hover:text-white"
               >
                 <History className="h-4 w-4 mr-2" />
-                {showHistory ? "Hide History" : "View Historical Data"}
+                {showHistory ? "Hide Date Picker" : "View Past 7 Days"}
               </Button>
             </div>
           </div>
@@ -328,18 +328,18 @@ export default function PlannerPage() {
         />
       </div>
 
-      {/* Historical View - Date Picker */}
+      {/* Date Picker for Past 7 Days */}
       {showHistory && (
         <Card className="mt-6 no-print">
           <div className="p-6">
             <h3 className="text-xl font-bold text-salon-purple mb-4 flex items-center">
               <CalendarDays className="h-5 w-5 mr-2" />
-              View Historical Data
+              Select Date from Past 7 Days
             </h3>
             
             <div className="mb-6">
               <Label htmlFor="history-date" className="text-sm font-medium text-gray-700">
-                Select Date to View
+                Choose a Date to View
               </Label>
               <Input
                 id="history-date"
@@ -347,10 +347,15 @@ export default function PlannerPage() {
                 value={selectedHistoryDate}
                 onChange={(e) => setSelectedHistoryDate(e.target.value)}
                 className="mt-1 max-w-xs"
+                min={(() => {
+                  const sevenDaysAgo = new Date();
+                  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                  return sevenDaysAgo.toISOString().split('T')[0];
+                })()}
                 max={getCurrentDate()}
               />
               <p className="text-xs text-gray-500 mt-1">
-                Choose a date to view your historical planner data
+                Select any date from the past 7 days to view your planner data
               </p>
             </div>
 
