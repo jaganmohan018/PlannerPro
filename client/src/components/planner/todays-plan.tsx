@@ -167,20 +167,52 @@ export default function TodaysPlan({ data, onUpdate, selectedDate }: TodaysPlanP
             <div className="text-xs font-semibold mb-2">Inventory</div>
             <div className="grid grid-cols-1 gap-1 text-xs">
               <label className="flex items-center space-x-1">
-                <Checkbox />
-                <span>Monitor Tracking Key Items to Drive Enthusiasm & Profit</span>
+                <Checkbox
+                  checked={data?.inventoryManagement?.reviewStoreReceiving || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.inventoryManagement || {};
+                    onUpdate({ 
+                      inventoryManagement: { ...currentSection, reviewStoreReceiving: checked }
+                    });
+                  }}
+                />
+                <span>Review the Store Receiving Report</span>
               </label>
               <label className="flex items-center space-x-1">
-                <Checkbox />
-                <span>Backbar Tracking</span>
+                <Checkbox
+                  checked={data?.inventoryManagement?.reviewCycleCounts || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.inventoryManagement || {};
+                    onUpdate({ 
+                      inventoryManagement: { ...currentSection, reviewCycleCounts: checked }
+                    });
+                  }}
+                />
+                <span>Review the Cycle Counts Report</span>
               </label>
               <label className="flex items-center space-x-1">
-                <Checkbox />
-                <span>Clean Windows & Doors</span>
+                <Checkbox
+                  checked={data?.inventoryManagement?.reviewNegativeOnHands || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.inventoryManagement || {};
+                    onUpdate({ 
+                      inventoryManagement: { ...currentSection, reviewNegativeOnHands: checked }
+                    });
+                  }}
+                />
+                <span>Review the Negative on Hands Report</span>
               </label>
               <label className="flex items-center space-x-1">
-                <Checkbox />
-                <span>Clean Floors</span>
+                <Checkbox
+                  checked={data?.inventoryManagement?.reviewDamageLog || false}
+                  onCheckedChange={(checked) => {
+                    const currentSection = data?.inventoryManagement || {};
+                    onUpdate({ 
+                      inventoryManagement: { ...currentSection, reviewDamageLog: checked }
+                    });
+                  }}
+                />
+                <span>Review the Damage Log & Update Accordingly</span>
               </label>
             </div>
           </div>

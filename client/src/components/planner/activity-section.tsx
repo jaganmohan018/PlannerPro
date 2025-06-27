@@ -105,42 +105,42 @@ export default function ActivitySection({ data, onUpdate }: ActivitySectionProps
       {/* Inventory Management */}
       <div className="bg-blue-50 p-4 rounded-lg mb-4">
         <h5 className="font-semibold text-blue-700 mb-3">Inventory Management</h5>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3">
           <label className="flex items-center space-x-2">
             <Checkbox
-              checked={inventory.stockLevelReview || false}
+              checked={inventory.reviewStoreReceiving || false}
               onCheckedChange={(checked) => 
-                handleCheckboxChange("inventoryManagement", "stockLevelReview", checked as boolean)
+                handleCheckboxChange("inventoryManagement", "reviewStoreReceiving", checked as boolean)
               }
             />
-            <span className="text-sm">Stock Level Review</span>
+            <span className="text-sm">Review the Store Receiving Report</span>
           </label>
           <label className="flex items-center space-x-2">
             <Checkbox
-              checked={inventory.reorderProcessing || false}
+              checked={inventory.reviewCycleCounts || false}
               onCheckedChange={(checked) => 
-                handleCheckboxChange("inventoryManagement", "reorderProcessing", checked as boolean)
+                handleCheckboxChange("inventoryManagement", "reviewCycleCounts", checked as boolean)
               }
             />
-            <span className="text-sm">Reorder Processing</span>
+            <span className="text-sm">Review the Cycle Counts Report</span>
           </label>
           <label className="flex items-center space-x-2">
             <Checkbox
-              checked={inventory.newArrivals || false}
+              checked={inventory.reviewNegativeOnHands || false}
               onCheckedChange={(checked) => 
-                handleCheckboxChange("inventoryManagement", "newArrivals", checked as boolean)
+                handleCheckboxChange("inventoryManagement", "reviewNegativeOnHands", checked as boolean)
               }
             />
-            <span className="text-sm">New Arrivals Processing</span>
+            <span className="text-sm">Review the Negative on Hands Report</span>
           </label>
           <label className="flex items-center space-x-2">
             <Checkbox
-              checked={inventory.expiryMonitoring || false}
+              checked={inventory.reviewDamageLog || false}
               onCheckedChange={(checked) => 
-                handleCheckboxChange("inventoryManagement", "expiryMonitoring", checked as boolean)
+                handleCheckboxChange("inventoryManagement", "reviewDamageLog", checked as boolean)
               }
             />
-            <span className="text-sm">Expiry Date Monitoring</span>
+            <span className="text-sm">Review the Damage Log & Update Accordingly</span>
           </label>
         </div>
       </div>
