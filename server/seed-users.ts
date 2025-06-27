@@ -53,6 +53,19 @@ async function seedUsers() {
     });
     console.log("✓ Business Executive user created (username: business_executive, password: password123)");
 
+    // Super Admin
+    const superAdminPassword = await hashPassword("password123");
+    await storage.createUser({
+      username: "super_admin",
+      password: superAdminPassword,
+      email: "admin@saloncentric.com",
+      firstName: "System",
+      lastName: "Administrator",
+      role: "super_admin",
+      storeId: null, // Can manage all users and stores
+    });
+    console.log("✓ Super Admin user created (username: super_admin, password: password123)");
+
     console.log("\nTest users created successfully!");
     console.log("You can now log in with any of these accounts to test different role permissions.");
     

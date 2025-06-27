@@ -11,7 +11,7 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
-  role: text("role").notNull(), // 'store_associate', 'district_manager', 'business_executive'
+  role: text("role").notNull(), // 'store_associate', 'district_manager', 'business_executive', 'super_admin'
   storeId: integer("store_id").references(() => stores.id), // For store associates
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -23,6 +23,7 @@ export const stores = pgTable("stores", {
   name: text("name").notNull(),
   location: text("location").notNull(),
   isActive: boolean("is_active").default(true),
+  districtManagerId: integer("district_manager_id").references(() => users.id), // Assigned by super admin
   createdAt: timestamp("created_at").defaultNow(),
 });
 
