@@ -118,6 +118,7 @@ This is a full-stack web application built for SalonCentric store managers to tr
 - June 27, 2025. Updated Inventory section to show only the specific 4 items required: Review the Store Receiving Report, Review the Cycle Counts Report, Review the Negative on Hands Report, and Review the Damage Log & Update Accordingly.
 - June 27, 2025. Updated Store Standards section to show only the specific 7 items required: Maintain Visual Merchandising & marketing Standards, Replenish/Fully Front Face the Store/Endcaps/Focus Fixtures & Cash Wrap, Clean Counters/Demo Area/Testers & All Displays, Clean Windows & Doors, Clean Floors, Clean & Replenish Bathrooms, and Empty All Trash Bins & Take Out for the Day.
 - June 27, 2025. Implemented store associate data saving and historical viewing features. Added manual save button for store associates to save daily planner data, and "View Past 7 Days" functionality to review historical entries with completion summaries, sales data, and activity progress tracking.
+- June 27, 2025. Implemented comprehensive store association security system. Store associates can now only access their assigned store's data through both frontend restrictions and backend enforcement. Added store information display in planner header showing store number, name, and location. All store-specific API endpoints now validate user permissions automatically.
 
 ## Authentication System
 

@@ -11,7 +11,7 @@ import { setupAuth, requireAuth, requireRole } from "./auth";
 // Middleware to check store association for store associates
 function requireStoreAccess(req: any, res: any, next: any) {
   const user = req.user;
-  const storeId = parseInt(req.params.storeId);
+  const storeId = parseInt(req.params.storeId || req.params.id);
   
   // Allow non-store associates (district managers, business executives, super admin) to access any store
   if (user.role !== 'store_associate') {
@@ -80,7 +80,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/stores/:id", requireAuth, async (req, res) => {
+  app.get("/api/stores/:id", requireAuth, requireStoreAccess, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const store = await storage.getStore(id);
