@@ -50,10 +50,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Store routes - accessible to all authenticated users
   app.get("/api/stores", requireAuth, async (req, res) => {
     try {
+      console.log('Fetching stores...');
       const stores = await storage.getStores();
+      console.log('Stores fetched successfully:', stores.length);
       res.json(stores);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch stores" });
+      console.error('Error fetching stores:', error);
+      res.status(500).json({ message: "Failed to fetch stores", error: error.message });
     }
   });
 

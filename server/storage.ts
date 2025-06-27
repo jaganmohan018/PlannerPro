@@ -62,7 +62,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getStores(): Promise<Store[]> {
-    return await db.select().from(stores).where(eq(stores.isActive, true)).orderBy(stores.storeNumber);
+    try {
+      console.log('Executing getStores query...');
+      const result = await db.select().from(stores).where(eq(stores.isActive, true)).orderBy(stores.storeNumber);
+      console.log('getStores query result:', result);
+      return result;
+    } catch (error) {
+      console.error('Error in getStores:', error);
+      throw error;
+    }
   }
 
   async getStore(id: number): Promise<Store | undefined> {
