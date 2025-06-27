@@ -33,6 +33,7 @@ export default function Navigation() {
   // Role-based navigation items
   const isStoreAssociate = user.role === 'store_associate';
   const isManagement = user.role === 'district_manager' || user.role === 'business_executive';
+  const isSuperAdmin = user.role === 'super_admin';
 
   return (
     <nav className="bg-salon-purple text-white shadow-lg no-print">

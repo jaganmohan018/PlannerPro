@@ -75,6 +75,15 @@ export class DatabaseStorage implements IStorage {
     return store;
   }
 
+  async assignStoreToDistrictManager(storeId: number, districtManagerId: number | null): Promise<Store> {
+    const [store] = await db
+      .update(stores)
+      .set({ districtManagerId })
+      .where(eq(stores.id, storeId))
+      .returning();
+    return store;
+  }
+
   async getPlannerEntry(storeId: number, date: string): Promise<PlannerEntry | undefined> {
     const [entry] = await db
       .select()
