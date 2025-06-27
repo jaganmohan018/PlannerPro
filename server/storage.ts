@@ -1,6 +1,6 @@
 import { users, stores, plannerEntries, staffSchedules, storeAnalytics, type User, type InsertUser, type Store, type InsertStore, type PlannerEntry, type InsertPlannerEntry, type StaffSchedule, type InsertStaffSchedule, type StoreAnalytics, type InsertStoreAnalytics } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, gte, lte } from "drizzle-orm";
 
 export interface IStorage {
   // User operations

@@ -122,24 +122,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
             { task: "Social Media Posts", completed: false }
           ],
           dailyOperations: {
-            storeOpening: false,
-            tillCount: false,
-            staffMeeting: false,
-            customerService: false,
-            displayMaintenance: false,
-            safetyCheck: false
+            reviewHuddleCalendar: false,
+            reviewLaborDashboards: false,
+            pullProcessOmniOrders: false,
+            setupEventEducationDemo: false,
+            reconcileDailyPaperwork: false,
+            checkEndOfDayNotes: false,
+            checkEducationDashboard: false,
+            strategizePrintCallLists: false
           },
           inventoryManagement: {
-            stockLevelReview: false,
-            reorderProcessing: false,
-            newArrivals: false,
-            expiryMonitoring: false
+            reviewStoreReceivingReport: false,
+            reviewCycleCountsReport: false,
+            reviewNegativeOnHandsReport: false,
+            reviewDamageLog: false
           },
           storeStandards: {
-            visualMerchandising: false,
-            cleanliness: false,
-            productOrganization: false,
-            signageUpdates: false
+            maintainVisualMerchandising: false,
+            replenishFrontFace: false,
+            cleanCountersDemo: false,
+            cleanWindowsDoors: false,
+            cleanFloors: false,
+            cleanReplenishBathrooms: false,
+            emptyTrashBins: false
           }
         };
         
