@@ -7,11 +7,14 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  getAllUsers(): Promise<User[]>;
+  getDistrictManagers(): Promise<User[]>;
   
   // Store operations
   getStores(): Promise<Store[]>;
   getStore(id: number): Promise<Store | undefined>;
   createStore(store: InsertStore): Promise<Store>;
+  assignStoreToDistrictManager(storeId: number, districtManagerId: number | null): Promise<Store>;
   
   // Planner entry operations
   getPlannerEntry(storeId: number, date: string): Promise<PlannerEntry | undefined>;
@@ -48,6 +51,14 @@ export class DatabaseStorage implements IStorage {
       .values(insertUser)
       .returning();
     return user;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users);
+  }
+
+  async getDistrictManagers(): Promise<User[]> {
+    return await db.select().from(users).where(eq(users.role, 'district_manager'));
   }
 
   async getStores(): Promise<Store[]> {

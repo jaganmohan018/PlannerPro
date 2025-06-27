@@ -9,6 +9,7 @@ import Navigation from "@/components/layout/navigation";
 import PlannerPage from "@/pages/planner";
 import Dashboard from "@/pages/dashboard";
 import AuthPage from "@/pages/auth-page";
+import AdminPage from "@/pages/admin-page";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -17,6 +18,7 @@ function Router() {
       <ProtectedRoute path="/" component={HomePage} />
       <ProtectedRoute path="/planner" component={PlannerPage} allowedRoles={['store_associate']} />
       <ProtectedRoute path="/dashboard" component={Dashboard} allowedRoles={['district_manager', 'business_executive']} />
+      <ProtectedRoute path="/admin" component={AdminPage} allowedRoles={['super_admin']} />
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>
@@ -43,6 +45,11 @@ function RoleBasedRedirect() {
   // Management roles go to analytics dashboard
   if (user.role === 'district_manager' || user.role === 'business_executive') {
     return <Redirect to="/dashboard" />;
+  }
+  
+  // Super admin goes to admin panel
+  if (user.role === 'super_admin') {
+    return <Redirect to="/admin" />;
   }
   
   return <Redirect to="/auth" />;

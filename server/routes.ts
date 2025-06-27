@@ -384,6 +384,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Super Admin Routes - User Management
+  app.get("/api/admin/users", requireRole("super_admin"), async (req, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      res.json(users);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ error: "Failed to fetch users" });
+    }
+  });
+
+  app.post("/api/admin/users", requireRole("super_admin"), async (req, res) => {
+    try {
+      const user = await storage.createUser(req.body);
+      res.status(201).json(user);
+    } catch (error) {
+      console.error("Error creating user:", error);
+      res.status(500).json({ error: "Failed to create user" });
+    }
+  });
+
+  app.get("/api/admin/district-managers", requireRole("super_admin"), async (req, res) => {
+    try {
+      const districtManagers = await storage.getDistrictManagers();
+      res.json(districtManagers);
+    } catch (error) {
+      console.error("Error fetching district managers:", error);
+      res.status(500).json({ error: "Failed to fetch district managers" });
+    }
+  });
+
+  // Super Admin Routes - Store Management
+  app.post("/api/admin/stores", requireRole("super_admin"), async (req, res) => {
+    try {
+      const store = await storage.createStore(req.body);
+      res.status(201).json(store);
+    } catch (error) {
+      console.error("Error creating store:", error);
+      res.status(500).json({ error: "Failed to create store" });
+    }
+  });
+
+  app.put("/api/admin/stores/:storeId/assign", requireRole("super_admin"), async (req, res) => {
+    try {
+      const { storeId } = req.params;
+      const { districtManagerId } = req.body;
+      
+      const store = await storage.assignStoreToDistrictManager(parseInt(storeId), districtManagerId);
+      res.json(store);
+    } catch (error) {
+      console.error("Error assigning store:", error);
+      res.status(500).json({ error: "Failed to assign store" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
