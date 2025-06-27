@@ -113,15 +113,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const defaultEntry = {
           storeId,
           date,
-          priorities: ["", "", ""],
-          todos: [
+          priorities: JSON.stringify(["", "", ""]),
+          todos: JSON.stringify([
             { task: "Schedule Team Meeting", completed: false },
             { task: "Update Product Displays", completed: false },
             { task: "Review Sales Reports", completed: false },
             { task: "Customer Follow-ups", completed: false },
             { task: "Social Media Posts", completed: false }
-          ],
-          dailyOperations: {
+          ]),
+          dailyOperations: JSON.stringify({
             reviewHuddleCalendar: false,
             reviewLaborDashboards: false,
             pullProcessOmniOrders: false,
@@ -130,14 +130,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
             checkEndOfDayNotes: false,
             checkEducationDashboard: false,
             strategizePrintCallLists: false
-          },
-          inventoryManagement: {
+          }),
+          inventoryManagement: JSON.stringify({
             reviewStoreReceivingReport: false,
             reviewCycleCountsReport: false,
             reviewNegativeOnHandsReport: false,
             reviewDamageLog: false
-          },
-          storeStandards: {
+          }),
+          storeStandards: JSON.stringify({
             maintainVisualMerchandising: false,
             replenishFrontFace: false,
             cleanCountersDemo: false,
@@ -145,7 +145,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             cleanFloors: false,
             cleanReplenishBathrooms: false,
             emptyTrashBins: false
-          }
+          })
         };
         
         entry = await storage.createPlannerEntry(defaultEntry);
