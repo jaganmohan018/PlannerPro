@@ -50,13 +50,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Store routes - accessible to all authenticated users
   app.get("/api/stores", requireAuth, async (req, res) => {
     try {
-      console.log('Fetching stores...');
       const stores = await storage.getStores();
-      console.log('Stores fetched successfully:', stores.length);
       res.json(stores);
     } catch (error) {
       console.error('Error fetching stores:', error);
-      res.status(500).json({ message: "Failed to fetch stores", error: error.message });
+      res.status(500).json({ message: "Failed to fetch stores" });
     }
   });
 
@@ -73,13 +71,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/stores", requireRole('business_executive'), async (req, res) => {
+  app.post("/api/stores", requireRole('super_admin'), async (req, res) => {
     try {
       const storeData = insertStoreSchema.parse(req.body);
       const store = await storage.createStore(storeData);
+      res.status(201).json(store);
+    } catch (error) {
+      console.error('Error creating store:', error);
+      res.status(400).json({ message: "Invalid store data", error: error.message });
+    }
+  });
+
+  // Store assignment route - Super Admin only
+  app.patch("/api/stores/:storeId/assign", requireRole('super_admin'), async (req, res) => {
+    try {
+      const storeId = parseInt(req.params.storeId);
+      const { districtManagerId } = req.body;
+      
+      if (isNaN(storeId)) {
+        return res.status(400).json({ message: "Invalid store ID" });
+      }
+      
+      const store = await storage.assignStoreToDistrictManager(storeId, districtManagerId);
       res.json(store);
     } catch (error) {
-      res.status(400).json({ message: "Invalid store data" });
+      console.error('Error assigning store:', error);
+      res.status(500).json({ message: "Failed to assign store" });
     }
   });
 
