@@ -159,14 +159,7 @@ export default function PlannerPage() {
                 <Save className="h-4 w-4 mr-2" />
                 {savePlannerMutation.isPending ? "Saving..." : "Save Data"}
               </Button>
-              <Button
-                onClick={() => setShowHistory(!showHistory)}
-                variant="outline"
-                className="border-salon-purple text-salon-purple hover:bg-salon-purple hover:text-white"
-              >
-                <History className="h-4 w-4 mr-2" />
-                {showHistory ? "Hide Date Picker" : "View Past 7 Days"}
-              </Button>
+
             </div>
           </div>
           <div className="flex space-x-6 mt-4 lg:mt-0">
@@ -328,25 +321,25 @@ export default function PlannerPage() {
         />
       </div>
 
-      {/* Date Picker for Past 7 Days */}
-      {showHistory && (
-        <Card className="mt-6 no-print">
-          <div className="p-6">
-            <h3 className="text-xl font-bold text-salon-purple mb-4 flex items-center">
-              <CalendarDays className="h-5 w-5 mr-2" />
-              Select Date from Past 7 Days
-            </h3>
-            
-            <div className="mb-6">
-              <Label htmlFor="history-date" className="text-sm font-medium text-gray-700">
-                Choose a Date to View
+      {/* Date Picker Section */}
+      <Card className="mt-6 no-print">
+        <div className="p-6">
+          <h3 className="text-xl font-bold text-salon-purple mb-4 flex items-center">
+            <CalendarDays className="h-5 w-5 mr-2" />
+            View Historical Data
+          </h3>
+          
+          <div className="flex items-end gap-4 mb-6">
+            <div className="flex-1 max-w-xs">
+              <Label htmlFor="selected-date" className="text-sm font-medium text-gray-700">
+                Select Date
               </Label>
               <Input
-                id="history-date"
+                id="selected-date"
                 type="date"
                 value={selectedHistoryDate}
                 onChange={(e) => setSelectedHistoryDate(e.target.value)}
-                className="mt-1 max-w-xs"
+                className="mt-1"
                 min={(() => {
                   const sevenDaysAgo = new Date();
                   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -354,76 +347,85 @@ export default function PlannerPage() {
                 })()}
                 max={getCurrentDate()}
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Select any date from the past 7 days to view your planner data
-              </p>
             </div>
-
-            {selectedHistoryDate && (
-              isLoadingHistory ? (
-                <div className="text-center py-8">
-                  <div className="text-gray-500">Loading historical data...</div>
-                </div>
-              ) : historicalData ? (
-                <Card className="p-4 border-l-4 border-salon-purple">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <div className="font-semibold text-lg">{formatDate(selectedHistoryDate)}</div>
-                      <div className="text-sm text-gray-600">
-                        {selectedHistoryDate === getCurrentDate() ? "Today" : 
-                         new Date(selectedHistoryDate) >= new Date(getCurrentDate()) ? "Future" : 
-                         Math.ceil((new Date(getCurrentDate()).getTime() - new Date(selectedHistoryDate).getTime()) / (1000 * 60 * 60 * 24)) + " days ago"}
-                      </div>
-                    </div>
-                    <div className="flex space-x-4 text-sm">
-                      <Badge variant="outline" className="bg-salon-purple/10 text-salon-purple">
-                        Sales: ${historicalData.dailySales || "0.00"}
-                      </Badge>
-                      <Badge variant="outline" className="bg-salon-pink/10 text-salon-pink">
-                        WTD: ${historicalData.wtdActual || "0.00"}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                    <div>
-                      <div className="font-medium text-blue-700 mb-1">Daily Operations</div>
-                      <div className="text-gray-600">
-                        {Object.values(historicalData.dailyOperations || {}).filter(Boolean).length}/8 completed
-                      </div>
-                    </div>
-                    <div>
-                      <div className="font-medium text-yellow-700 mb-1">Inventory</div>
-                      <div className="text-gray-600">
-                        {Object.values(historicalData.inventoryManagement || {}).filter(Boolean).length}/4 completed
-                      </div>
-                    </div>
-                    <div>
-                      <div className="font-medium text-green-700 mb-1">Store Standards</div>
-                      <div className="text-gray-600">
-                        {Object.values(historicalData.storeStandards || {}).filter(Boolean).length}/7 completed
-                      </div>
-                    </div>
-                  </div>
-                  {historicalData.priorities && historicalData.priorities.length > 0 && (
-                    <div className="mt-3 pt-3 border-t">
-                      <div className="font-medium text-orange-700 mb-1">Today's Priorities</div>
-                      <div className="text-sm text-gray-600">
-                        {historicalData.priorities.filter((p: string) => p.trim()).length} priorities set
-                      </div>
-                    </div>
-                  )}
-                </Card>
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <CalendarDays className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                    <p>No data found for {formatDate(selectedHistoryDate)}</p>
-                    <p className="text-sm mt-1">This date may not have any saved planner data.</p>
-                  </div>
-                )
-            )}
+            <Button
+              onClick={() => setShowHistory(!!selectedHistoryDate)}
+              disabled={!selectedHistoryDate}
+              className="bg-salon-purple hover:bg-salon-purple/90"
+            >
+              <CalendarDays className="h-4 w-4 mr-2" />
+              View
+            </Button>
           </div>
-        </Card>
-      )}
+          
+          <p className="text-xs text-gray-500 mb-4">
+            Select a date from the past 7 days and click "View" to see the planner data for that day.
+          </p>
+
+          {showHistory && selectedHistoryDate && (
+            isLoadingHistory ? (
+              <div className="text-center py-8">
+                <div className="text-gray-500">Loading data for {formatDate(selectedHistoryDate)}...</div>
+              </div>
+            ) : historicalData ? (
+              <Card className="p-4 border-l-4 border-salon-purple">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <div className="font-semibold text-lg">{formatDate(selectedHistoryDate)}</div>
+                    <div className="text-sm text-gray-600">
+                      {selectedHistoryDate === getCurrentDate() ? "Today" : 
+                       new Date(selectedHistoryDate) >= new Date(getCurrentDate()) ? "Future" : 
+                       Math.ceil((new Date(getCurrentDate()).getTime() - new Date(selectedHistoryDate).getTime()) / (1000 * 60 * 60 * 24)) + " days ago"}
+                    </div>
+                  </div>
+                  <div className="flex space-x-4 text-sm">
+                    <Badge variant="outline" className="bg-salon-purple/10 text-salon-purple">
+                      Sales: ${historicalData.dailySales || "0.00"}
+                    </Badge>
+                    <Badge variant="outline" className="bg-salon-pink/10 text-salon-pink">
+                      WTD: ${historicalData.wtdActual || "0.00"}
+                    </Badge>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <div className="font-medium text-blue-700 mb-1">Daily Operations</div>
+                    <div className="text-gray-600">
+                      {Object.values(historicalData.dailyOperations || {}).filter(Boolean).length}/8 completed
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-medium text-yellow-700 mb-1">Inventory</div>
+                    <div className="text-gray-600">
+                      {Object.values(historicalData.inventoryManagement || {}).filter(Boolean).length}/4 completed
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-medium text-green-700 mb-1">Store Standards</div>
+                    <div className="text-gray-600">
+                      {Object.values(historicalData.storeStandards || {}).filter(Boolean).length}/7 completed
+                    </div>
+                  </div>
+                </div>
+                {historicalData.priorities && historicalData.priorities.length > 0 && (
+                  <div className="mt-3 pt-3 border-t">
+                    <div className="font-medium text-orange-700 mb-1">Priorities</div>
+                    <div className="text-sm text-gray-600">
+                      {historicalData.priorities.filter((p: string) => p.trim()).length} priorities set
+                    </div>
+                  </div>
+                )}
+              </Card>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <CalendarDays className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <p>No data found for {formatDate(selectedHistoryDate)}</p>
+                <p className="text-sm mt-1">This date may not have any saved planner data.</p>
+              </div>
+            )
+          )}
+        </div>
+      </Card>
     </div>
   );
 }
