@@ -121,6 +121,7 @@ This is a full-stack web application built for SalonCentric store managers to tr
 - June 27, 2025. Implemented comprehensive store association security system. Store associates can now only access their assigned store's data through both frontend restrictions and backend enforcement. Added store information display in planner header showing store number, name, and location. All store-specific API endpoints now validate user permissions automatically.
 - June 27, 2025. Fixed store list filtering for store associates to only show their assigned store. Replaced "View Past 7 Days" feature with a date picker allowing store associates to select any specific date to view historical planner data. The date picker prevents future date selection and provides clear feedback when no data exists for selected dates.
 - June 27, 2025. Implemented clean date picker interface with explicit "View" button functionality. Users must select a specific date from the past 7 days and click "View" to display historical data. Removed automatic data loading and button-based toggling. The interface now requires user action to view any historical data, providing better control and cleaner user experience.
+- June 27, 2025. Fixed district manager analytics dashboard to remove "All Regions" option. District managers now only see "West Coast" region selection, while business executives retain access to all regions. This ensures proper role-based data access restrictions in the analytics interface.
 
 ## Authentication System
 

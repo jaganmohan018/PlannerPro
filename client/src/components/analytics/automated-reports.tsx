@@ -103,12 +103,18 @@ export default function AutomatedReports({ userRole }: AutomatedReportsProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Regions</SelectItem>
+                {userRole === 'business_executive' && (
+                  <SelectItem value="all">All Regions</SelectItem>
+                )}
                 <SelectItem value="west">West Coast</SelectItem>
-                <SelectItem value="east">East Coast</SelectItem>
-                <SelectItem value="central">Central</SelectItem>
-                <SelectItem value="southeast">Southeast</SelectItem>
-                <SelectItem value="southwest">Southwest</SelectItem>
+                {userRole === 'business_executive' && (
+                  <>
+                    <SelectItem value="east">East Coast</SelectItem>
+                    <SelectItem value="central">Central</SelectItem>
+                    <SelectItem value="southeast">Southeast</SelectItem>
+                    <SelectItem value="southwest">Southwest</SelectItem>
+                  </>
+                )}
               </SelectContent>
             </Select>
             
