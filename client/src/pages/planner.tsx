@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { getCurrentDate, formatDate } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { CalendarDays, Save, History } from "lucide-react";
+import { CalendarDays, Save, History, Building2 } from "lucide-react";
 import SalesTracking from "@/components/planner/sales-tracking";
 import StaffScheduling from "@/components/planner/staff-scheduling";
 import ActivitySection from "@/components/planner/activity-section";
@@ -35,6 +35,12 @@ export default function PlannerPage() {
 
   // Use the user's assigned store
   const selectedStore = user?.storeId;
+
+  // Query for store information
+  const { data: storeData } = useQuery({
+    queryKey: [`/api/stores/${selectedStore}`],
+    enabled: !!selectedStore,
+  });
 
   const { data: plannerData, isLoading } = useQuery({
     queryKey: [`/api/planner/${selectedStore}/${selectedDate}`],
@@ -129,6 +135,17 @@ export default function PlannerPage() {
             <span className="text-2xl font-bold text-salon-purple">
               {formatDate(selectedDate)}
             </span>
+            {storeData && (
+              <div className="flex items-center space-x-2 text-salon-purple">
+                <Building2 className="h-5 w-5" />
+                <span className="text-lg font-semibold">
+                  Store #{storeData.storeNumber} - {storeData.name}
+                </span>
+                <Badge variant="outline" className="text-xs">
+                  {storeData.location}
+                </Badge>
+              </div>
+            )}
             <div className="flex space-x-2">
               <Button
                 onClick={() => savePlannerMutation.mutate()}

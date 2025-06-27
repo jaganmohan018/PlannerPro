@@ -7,6 +7,28 @@ import fs from "fs";
 import { randomUUID } from "crypto";
 import { storage } from "./storage";
 import { setupAuth, requireAuth, requireRole } from "./auth";
+
+// Middleware to check store association for store associates
+function requireStoreAccess(req: any, res: any, next: any) {
+  const user = req.user;
+  const storeId = parseInt(req.params.storeId);
+  
+  // Allow non-store associates (district managers, business executives, super admin) to access any store
+  if (user.role !== 'store_associate') {
+    return next();
+  }
+  
+  // Store associates can only access their assigned store
+  if (!user.storeId) {
+    return res.status(403).json({ error: "No store assigned to your account" });
+  }
+  
+  if (user.storeId !== storeId) {
+    return res.status(403).json({ error: "Access denied: You can only access your assigned store" });
+  }
+  
+  next();
+}
 import { insertStoreSchema, insertPlannerEntrySchema, insertStaffScheduleSchema } from "@shared/schema";
 
 // Configure multer for photo uploads
@@ -101,7 +123,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Planner entry routes
-  app.get("/api/planner/:storeId/:date", requireAuth, async (req, res) => {
+  app.get("/api/planner/:storeId/:date", requireAuth, requireStoreAccess, async (req, res) => {
     try {
       const storeId = parseInt(req.params.storeId);
       const date = req.params.date;
@@ -175,7 +197,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Historical planner entries route (past 7 days for store associates)
-  app.get("/api/planner/:storeId/history", requireAuth, async (req, res) => {
+  app.get("/api/planner/:storeId/history", requireAuth, requireStoreAccess, async (req, res) => {
     try {
       const storeId = parseInt(req.params.storeId);
       
