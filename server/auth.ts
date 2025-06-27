@@ -6,8 +6,7 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
-import connectPg from "connect-pg-simple";
-import { pool } from "./db";
+import createMemoryStore from "memorystore";
 
 declare global {
   namespace Express {
@@ -15,7 +14,7 @@ declare global {
   }
 }
 
-const PostgresSessionStore = connectPg(session);
+const MemoryStore = createMemoryStore(session);
 
 const scryptAsync = promisify(scrypt);
 
@@ -37,9 +36,8 @@ export function setupAuth(app: Express) {
     secret: process.env.SESSION_SECRET || "salon-centric-secret-key",
     resave: false,
     saveUninitialized: false,
-    store: new PostgresSessionStore({ 
-      pool, 
-      createTableIfMissing: true 
+    store: new MemoryStore({
+      checkPeriod: 86400000, // prune expired entries every 24h
     }),
     cookie: {
       secure: false, // Set to true in production with HTTPS
@@ -56,27 +54,13 @@ export function setupAuth(app: Express) {
   passport.use(
     new LocalStrategy(async (username, password, done) => {
       try {
-        console.log(`Attempting login for username: ${username}`);
         const user = await storage.getUserByUsername(username);
-        console.log(`User found:`, user ? `${user.username} (${user.role})` : 'null');
-        
-        if (!user) {
-          console.log('User not found');
+        if (!user || !(await comparePasswords(password, user.password))) {
           return done(null, false, { message: "Invalid username or password" });
         }
-        
-        const passwordMatch = await comparePasswords(password, user.password);
-        console.log(`Password match:`, passwordMatch);
-        
-        if (!passwordMatch) {
-          console.log('Password mismatch');
-          return done(null, false, { message: "Invalid username or password" });
-        }
-        
-        console.log('Login successful for user:', user.username);
         return done(null, user);
       } catch (error) {
-        console.error('Login error:', error);
+        console.error('Authentication error:', error);
         return done(error);
       }
     }),
