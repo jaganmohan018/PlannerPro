@@ -125,7 +125,7 @@ export default function PlannerPage() {
               <Button
                 onClick={() => savePlannerMutation.mutate()}
                 disabled={savePlannerMutation.isPending}
-                className="bg-salon-purple hover:bg-salon-purple/90"
+                className="bg-salon-purple hover:bg-salon-purple/90 text-white"
               >
                 <Save className="h-4 w-4 mr-2" />
                 {savePlannerMutation.isPending ? "Saving..." : "Save Data"}

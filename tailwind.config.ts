@@ -51,6 +51,13 @@ export default {
           "4": "var(--chart-4)",
           "5": "var(--chart-5)",
         },
+        salon: {
+          purple: "var(--salon-purple)",
+          "light-purple": "var(--salon-light-purple)",
+          pink: "var(--salon-pink)",
+          orange: "var(--salon-orange)",
+          bg: "var(--salon-bg)",
+        },
         sidebar: {
           DEFAULT: "var(--sidebar-background)",
           foreground: "var(--sidebar-foreground)",
