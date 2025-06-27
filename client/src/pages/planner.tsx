@@ -328,72 +328,93 @@ export default function PlannerPage() {
         />
       </div>
 
-      {/* Historical View - Past 7 Days */}
+      {/* Historical View - Date Picker */}
       {showHistory && (
         <Card className="mt-6 no-print">
           <div className="p-6">
             <h3 className="text-xl font-bold text-salon-purple mb-4 flex items-center">
               <CalendarDays className="h-5 w-5 mr-2" />
-              Past 7 Days History
+              View Historical Data
             </h3>
-            {historicalData ? (
-              <div className="space-y-4">
-                {historicalData.map((entry: any, index: number) => (
-                  <Card key={index} className="p-4 border-l-4 border-salon-purple">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <div className="font-semibold text-lg">{formatDate(entry.date)}</div>
-                        <div className="text-sm text-gray-600">
-                          {entry.date === getCurrentDate() ? "Today" : 
-                           new Date(entry.date) >= new Date(getCurrentDate()) ? "Future" : 
-                           Math.ceil((new Date(getCurrentDate()).getTime() - new Date(entry.date).getTime()) / (1000 * 60 * 60 * 24)) + " days ago"}
-                        </div>
-                      </div>
-                      <div className="flex space-x-4 text-sm">
-                        <Badge variant="outline" className="bg-salon-purple/10 text-salon-purple">
-                          Sales: ${entry.dailySales || "0.00"}
-                        </Badge>
-                        <Badge variant="outline" className="bg-salon-pink/10 text-salon-pink">
-                          WTD: ${entry.wtdActual || "0.00"}
-                        </Badge>
+            
+            <div className="mb-6">
+              <Label htmlFor="history-date" className="text-sm font-medium text-gray-700">
+                Select Date to View
+              </Label>
+              <Input
+                id="history-date"
+                type="date"
+                value={selectedHistoryDate}
+                onChange={(e) => setSelectedHistoryDate(e.target.value)}
+                className="mt-1 max-w-xs"
+                max={getCurrentDate()}
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Choose a date to view your historical planner data
+              </p>
+            </div>
+
+            {selectedHistoryDate && (
+              isLoadingHistory ? (
+                <div className="text-center py-8">
+                  <div className="text-gray-500">Loading historical data...</div>
+                </div>
+              ) : historicalData ? (
+                <Card className="p-4 border-l-4 border-salon-purple">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <div className="font-semibold text-lg">{formatDate(selectedHistoryDate)}</div>
+                      <div className="text-sm text-gray-600">
+                        {selectedHistoryDate === getCurrentDate() ? "Today" : 
+                         new Date(selectedHistoryDate) >= new Date(getCurrentDate()) ? "Future" : 
+                         Math.ceil((new Date(getCurrentDate()).getTime() - new Date(selectedHistoryDate).getTime()) / (1000 * 60 * 60 * 24)) + " days ago"}
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                      <div>
-                        <div className="font-medium text-blue-700 mb-1">Daily Operations</div>
-                        <div className="text-gray-600">
-                          {Object.values(entry.dailyOperations || {}).filter(Boolean).length}/8 completed
+                    <div className="flex space-x-4 text-sm">
+                      <Badge variant="outline" className="bg-salon-purple/10 text-salon-purple">
+                        Sales: ${historicalData.dailySales || "0.00"}
+                      </Badge>
+                      <Badge variant="outline" className="bg-salon-pink/10 text-salon-pink">
+                        WTD: ${historicalData.wtdActual || "0.00"}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <div className="font-medium text-blue-700 mb-1">Daily Operations</div>
+                      <div className="text-gray-600">
+                        {Object.values(historicalData.dailyOperations || {}).filter(Boolean).length}/8 completed
                         </div>
                       </div>
                       <div>
                         <div className="font-medium text-yellow-700 mb-1">Inventory</div>
                         <div className="text-gray-600">
-                          {Object.values(entry.inventoryManagement || {}).filter(Boolean).length}/4 completed
+                          {Object.values(historicalData.inventoryManagement || {}).filter(Boolean).length}/4 completed
                         </div>
                       </div>
                       <div>
                         <div className="font-medium text-green-700 mb-1">Store Standards</div>
                         <div className="text-gray-600">
-                          {Object.values(entry.storeStandards || {}).filter(Boolean).length}/7 completed
+                          {Object.values(historicalData.storeStandards || {}).filter(Boolean).length}/7 completed
                         </div>
                       </div>
                     </div>
-                    {entry.priorities && entry.priorities.length > 0 && (
+                    {historicalData.priorities && historicalData.priorities.length > 0 && (
                       <div className="mt-3 pt-3 border-t">
                         <div className="font-medium text-orange-700 mb-1">Today's Priorities</div>
                         <div className="text-sm text-gray-600">
-                          {entry.priorities.filter((p: string) => p.trim()).length} priorities set
+                          {historicalData.priorities.filter((p: string) => p.trim()).length} priorities set
                         </div>
                       </div>
                     )}
                   </Card>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                <CalendarDays className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                <p>Loading historical data...</p>
-              </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <CalendarDays className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                    <p>No data found for {formatDate(selectedHistoryDate)}</p>
+                    <p className="text-sm mt-1">This date may not have any saved planner data.</p>
+                  </div>
+                )
             )}
           </div>
         </Card>
